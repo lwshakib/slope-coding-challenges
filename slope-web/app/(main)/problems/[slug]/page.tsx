@@ -7,7 +7,8 @@ import { ArrowLeft, Play, Send, Settings, CheckCircle, XCircle, Code2, Terminal,
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
-import { vscodeDark } from '@uiw/codemirror-theme-vscode'
+import { createTheme } from '@uiw/codemirror-themes'
+import { tags as t } from '@lezer/highlight'
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -44,6 +45,50 @@ interface Problem {
     testCases: TestCase[];
     starterCode?: Record<string, string>;
 }
+
+// Custom CodeMirror theme that follows shadcn design system
+const shadcnTheme = createTheme({
+    theme: 'dark',
+    settings: {
+        background: 'transparent',
+        foreground: 'hsl(var(--foreground))',
+        caret: 'hsl(var(--primary))',
+        selection: 'hsl(var(--primary) / 0.2)',
+        selectionMatch: 'hsl(var(--primary) / 0.15)',
+        lineHighlight: 'hsl(var(--muted) / 0.3)',
+        gutterBackground: 'transparent',
+        gutterForeground: 'hsl(var(--muted-foreground) / 0.5)',
+        gutterBorder: 'transparent',
+    },
+    styles: [
+        { tag: t.comment, color: 'hsl(var(--muted-foreground))' },
+        { tag: t.lineComment, color: 'hsl(var(--muted-foreground))' },
+        { tag: t.blockComment, color: 'hsl(var(--muted-foreground))' },
+        { tag: t.docComment, color: 'hsl(var(--muted-foreground))' },
+        { tag: t.keyword, color: 'hsl(var(--primary))' },
+        { tag: t.controlKeyword, color: 'hsl(var(--primary))' },
+        { tag: t.operatorKeyword, color: 'hsl(var(--primary))' },
+        { tag: t.definitionKeyword, color: 'hsl(var(--primary))' },
+        { tag: t.moduleKeyword, color: 'hsl(var(--primary))' },
+        { tag: t.string, color: 'hsl(142 76% 55%)' }, // Green for strings
+        { tag: t.regexp, color: 'hsl(142 76% 55%)' },
+        { tag: t.number, color: 'hsl(35 92% 65%)' }, // Orange for numbers
+        { tag: t.bool, color: 'hsl(35 92% 65%)' },
+        { tag: t.null, color: 'hsl(35 92% 65%)' },
+        { tag: t.function(t.variableName), color: 'hsl(210 100% 70%)' }, // Blue for functions
+        { tag: t.function(t.propertyName), color: 'hsl(210 100% 70%)' },
+        { tag: t.definition(t.variableName), color: 'hsl(var(--foreground))' },
+        { tag: t.definition(t.propertyName), color: 'hsl(var(--foreground))' },
+        { tag: t.typeName, color: 'hsl(var(--primary) / 0.8)' },
+        { tag: t.className, color: 'hsl(var(--primary) / 0.8)' },
+        { tag: t.propertyName, color: 'hsl(var(--foreground))' },
+        { tag: t.variableName, color: 'hsl(var(--foreground))' },
+        { tag: t.operator, color: 'hsl(var(--foreground) / 0.7)' },
+        { tag: t.punctuation, color: 'hsl(var(--foreground) / 0.5)' },
+        { tag: t.bracket, color: 'hsl(var(--foreground) / 0.6)' },
+        { tag: t.meta, color: 'hsl(var(--muted-foreground))' },
+    ],
+});
 
 export default function ProblemIDE() {
     const params = useParams()
@@ -107,7 +152,7 @@ export default function ProblemIDE() {
     }
 
     return (
-        <div className="h-[calc(100vh-9rem)] w-full max-w-[1800px] mx-auto px-4 flex flex-col gap-4 animate-in fade-in duration-500">
+        <div className="h-full w-full mx-auto flex flex-col gap-4 animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex items-center justify-between bg-card/50 backdrop-blur border border-border/40 p-3 rounded-lg shadow-sm">
                 <div className="flex items-center gap-4">
@@ -204,7 +249,7 @@ export default function ProblemIDE() {
                                     <CodeMirror
                                         value={code}
                                         height="100%"
-                                        theme={vscodeDark}
+                                        theme={shadcnTheme}
                                         extensions={getLanguageExtension(language)}
                                         onChange={(val) => setCode(val)}
                                         className="h-full text-[13px] font-mono"
