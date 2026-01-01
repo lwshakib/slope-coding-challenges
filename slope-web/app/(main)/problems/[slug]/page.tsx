@@ -46,49 +46,58 @@ interface Problem {
     starterCode?: Record<string, string>;
 }
 
-// Custom CodeMirror theme that follows shadcn design system
+// Custom CodeMirror theme that strictly follows shadcn design system tokens
 const shadcnTheme = createTheme({
     theme: 'dark',
     settings: {
         background: 'transparent',
-        foreground: 'hsl(var(--foreground))',
-        caret: 'hsl(var(--primary))',
-        selection: 'hsl(var(--primary) / 0.2)',
-        selectionMatch: 'hsl(var(--primary) / 0.15)',
-        lineHighlight: 'hsl(var(--muted) / 0.3)',
+        foreground: 'var(--foreground)',
+        caret: 'var(--primary)',
+        selection: 'var(--accent)',
+        selectionMatch: 'var(--accent)',
+        lineHighlight: 'var(--muted)',
         gutterBackground: 'transparent',
-        gutterForeground: 'hsl(var(--muted-foreground) / 0.5)',
+        gutterForeground: 'var(--muted-foreground)',
         gutterBorder: 'transparent',
     },
     styles: [
-        { tag: t.comment, color: 'hsl(var(--muted-foreground))' },
-        { tag: t.lineComment, color: 'hsl(var(--muted-foreground))' },
-        { tag: t.blockComment, color: 'hsl(var(--muted-foreground))' },
-        { tag: t.docComment, color: 'hsl(var(--muted-foreground))' },
-        { tag: t.keyword, color: 'hsl(var(--primary))' },
-        { tag: t.controlKeyword, color: 'hsl(var(--primary))' },
-        { tag: t.operatorKeyword, color: 'hsl(var(--primary))' },
-        { tag: t.definitionKeyword, color: 'hsl(var(--primary))' },
-        { tag: t.moduleKeyword, color: 'hsl(var(--primary))' },
-        { tag: t.string, color: 'hsl(142 76% 55%)' }, // Green for strings
-        { tag: t.regexp, color: 'hsl(142 76% 55%)' },
-        { tag: t.number, color: 'hsl(35 92% 65%)' }, // Orange for numbers
-        { tag: t.bool, color: 'hsl(35 92% 65%)' },
-        { tag: t.null, color: 'hsl(35 92% 65%)' },
-        { tag: t.function(t.variableName), color: 'hsl(210 100% 70%)' }, // Blue for functions
-        { tag: t.function(t.propertyName), color: 'hsl(210 100% 70%)' },
-        { tag: t.definition(t.variableName), color: 'hsl(var(--foreground))' },
-        { tag: t.definition(t.propertyName), color: 'hsl(var(--foreground))' },
-        { tag: t.typeName, color: 'hsl(var(--primary) / 0.8)' },
-        { tag: t.className, color: 'hsl(var(--primary) / 0.8)' },
-        { tag: t.propertyName, color: 'hsl(var(--foreground))' },
-        { tag: t.variableName, color: 'hsl(var(--foreground))' },
-        { tag: t.operator, color: 'hsl(var(--foreground) / 0.7)' },
-        { tag: t.punctuation, color: 'hsl(var(--foreground) / 0.5)' },
-        { tag: t.bracket, color: 'hsl(var(--foreground) / 0.6)' },
-        { tag: t.meta, color: 'hsl(var(--muted-foreground))' },
+        { tag: t.comment, color: 'var(--muted-foreground)' },
+        { tag: t.lineComment, color: 'var(--muted-foreground)' },
+        { tag: t.blockComment, color: 'var(--muted-foreground)' },
+        { tag: t.docComment, color: 'var(--muted-foreground)' },
+        
+        { tag: t.keyword, color: 'var(--primary)' },
+        { tag: t.controlKeyword, color: 'var(--primary)' },
+        { tag: t.operatorKeyword, color: 'var(--primary)' },
+        { tag: t.definitionKeyword, color: 'var(--primary)' },
+        { tag: t.moduleKeyword, color: 'var(--primary)' },
+        
+        { tag: t.string, color: 'var(--chart-2)' }, // Greenish in dark mode usually
+        { tag: t.regexp, color: 'var(--chart-2)' },
+        
+        { tag: t.number, color: 'var(--chart-4)' }, // Orange/Yellowish
+        { tag: t.bool, color: 'var(--chart-4)' },
+        { tag: t.null, color: 'var(--destructive)' },
+        
+        { tag: t.function(t.variableName), color: 'var(--chart-1)' }, // Blueish
+        { tag: t.function(t.propertyName), color: 'var(--chart-1)' },
+        
+        { tag: t.variableName, color: 'var(--foreground)' },
+        { tag: t.propertyName, color: 'var(--foreground)' },
+        { tag: t.definition(t.variableName), color: 'var(--foreground)' },
+        { tag: t.definition(t.propertyName), color: 'var(--foreground)' },
+        
+        { tag: t.typeName, color: 'var(--chart-5)' },
+        { tag: t.className, color: 'var(--chart-5)' },
+        
+        { tag: t.operator, color: 'var(--muted-foreground)' },
+        { tag: t.punctuation, color: 'var(--muted-foreground)' },
+        { tag: t.bracket, color: 'var(--muted-foreground)' },
+        { tag: t.meta, color: 'var(--muted-foreground)' },
     ],
 });
+// Custom CodeMirror theme that follows shadcn design system
+
 
 export default function ProblemIDE() {
     const params = useParams()
@@ -152,7 +161,7 @@ export default function ProblemIDE() {
     }
 
     return (
-        <div className="h-full w-full mx-auto flex flex-col gap-4 animate-in fade-in duration-500">
+        <div className="h-screen w-full flex flex-col gap-4 p-4 overflow-hidden animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex items-center justify-between bg-card/50 backdrop-blur border border-border/40 p-3 rounded-lg shadow-sm">
                 <div className="flex items-center gap-4">
