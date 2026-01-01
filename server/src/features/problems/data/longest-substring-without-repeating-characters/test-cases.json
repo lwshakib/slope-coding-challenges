@@ -1,0 +1,32 @@
+[
+  {
+    "input": "s = \"abcabcbb\"",
+    "expectedOutput": "3",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"bbbbb\"",
+    "expectedOutput": "1",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"pwwkew\"",
+    "expectedOutput": "3",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"\"",
+    "expectedOutput": "0",
+    "isPublic": false
+  },
+  {
+    "input": "s = \" \"",
+    "expectedOutput": "1",
+    "isPublic": false
+  },
+  {
+    "input": "s = \"dvdf\"",
+    "expectedOutput": "3",
+    "isPublic": false
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "id": "4",
+  "slug": "median-of-two-sorted-arrays",
+  "title": "Median of Two Sorted Arrays",
+  "difficulty": "Hard",
+  "category": "Binary Search",
+  "tags": ["Array", "Binary Search", "Divide and Conquer"],
+  "acceptance": "35.6%"
+}

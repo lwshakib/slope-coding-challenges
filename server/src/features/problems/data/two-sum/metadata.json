@@ -1,0 +1,9 @@
+{
+  "id": "1",
+  "slug": "two-sum",
+  "title": "Two Sum",
+  "difficulty": "Easy",
+  "category": "Array",
+  "tags": ["Array", "Hash Table"],
+  "acceptance": "49.3%"
+}

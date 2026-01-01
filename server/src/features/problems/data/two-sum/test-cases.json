@@ -1,0 +1,32 @@
+[
+  {
+    "input": "nums = [2,7,11,15], target = 9",
+    "expectedOutput": "[0,1]",
+    "isPublic": true
+  },
+  {
+    "input": "nums = [3,2,4], target = 6",
+    "expectedOutput": "[1,2]",
+    "isPublic": true
+  },
+  {
+    "input": "nums = [3,3], target = 6",
+    "expectedOutput": "[0,1]",
+    "isPublic": true
+  },
+  {
+    "input": "nums = [2,5,5,11], target = 10",
+    "expectedOutput": "[1,2]",
+    "isPublic": false
+  },
+  {
+    "input": "nums = [0,4,3,0], target = 0",
+    "expectedOutput": "[0,3]",
+    "isPublic": false
+  },
+  {
+    "input": "nums = [-1,-2,-3,-4,-5], target = -8",
+    "expectedOutput": "[2,4]",
+    "isPublic": false
+  }
+]

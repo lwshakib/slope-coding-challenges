@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number} x\n * @return {boolean}\n */\nvar isPalindrome = function(x) {\n    \n};",
+  "typescript": "function isPalindrome(x: number): boolean {\n    \n};",
+  "python": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        "
+}

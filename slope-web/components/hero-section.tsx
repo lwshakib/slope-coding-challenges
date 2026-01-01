@@ -7,7 +7,9 @@ import { TextEffect } from '@/components/ui/text-effect'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import { HeroHeader } from './header'
 
-const transitionVariants = {
+import { Variants } from 'motion/react'
+
+const transitionVariants: { item: Variants } = {
     item: {
         hidden: {
             opacity: 0,
@@ -26,6 +28,7 @@ const transitionVariants = {
         },
     },
 }
+
 
 export default function HeroSection() {
     return (
@@ -48,8 +51,8 @@ export default function HeroSection() {
                                         transition: {
                                             delayChildren: 1,
                                         },
-                                    },
-                                },
+                                    } as Variants['visible'],
+                                } as Variants,
                                 item: {
                                     hidden: {
                                         opacity: 0,
@@ -64,8 +67,9 @@ export default function HeroSection() {
                                             duration: 2,
                                         },
                                     },
-                                },
+                                } as Variants,
                             }}
+
                             className="mask-b-from-35% mask-b-to-90% absolute inset-0 top-56 -z-20 lg:top-32">
                             <Image
                                 src="https://ik.imagekit.io/lrigu76hy/tailark/night-background.jpg?updatedAt=1745733451120"
