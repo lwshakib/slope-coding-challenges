@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
     Trophy, 
@@ -16,51 +17,91 @@ import {
     Filter,
     Flame,
     History,
-    CheckCircle2
+    CheckCircle2,
+    Loader2
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Link from 'next/link'
+import { toast } from "sonner"
 
-const contests = [
-    {
-        id: "w432",
-        title: "Weekly Contest 432",
-        description: "Standard weekly competitive programming round.",
-        date: "Jan 04, 2026",
-        time: "08:00 AM PST",
-        duration: "90 Mins",
-        participants: "14.5k",
-        difficulty: "Mixed",
-        status: "UPCOMING",
-        prizes: "$500 Pool"
-    },
-    {
-        id: "b148",
-        title: "Biweekly Contest 148",
-        description: "Special bi-weekly challenge for advanced solvers.",
-        date: "Jan 12, 2026",
-        time: "07:30 PM PST",
-        duration: "120 Mins",
-        participants: "8.2k",
-        difficulty: "Hard",
-        status: "UPCOMING",
-        prizes: "$1,000 Pool"
-    },
-    {
-        id: "s2026",
-        title: "Slope Spring Sprint 2026",
-        description: "Seasonal championship for university students.",
-        date: "Mar 15, 2026",
-        time: "10:00 AM PST",
-        duration: "5 Hours",
-        participants: "2.1k",
-        difficulty: "Advanced",
-        status: "UPCOMING",
-        prizes: "$5,000 + Swag"
-    }
-]
+interface Contest {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    startTime: string;
+    endTime: string;
+    prizes?: string;
+    registrationCount: number;
+    isRegistered?: boolean;
+}
 
 export default function ContestsPage() {
+    const [contests, setContests] = useState<Contest[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [registeringId, setRegisteringId] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchContests = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests`, {
+                    cache: 'no-store'
+                })
+                const data = await res.json()
+                
+                // For each contest, check if user is registered
+                const contestsWithStatus = await Promise.all(data.map(async (c: Contest) => {
+                    const statusRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests/${c.id}/status`, {
+                        credentials: 'include'
+                    })
+                    const statusData = await statusRes.json()
+                    return { ...c, isRegistered: statusData.registered }
+                }))
+                
+                setContests(contestsWithStatus)
+            } catch (error) {
+                console.error("Failed to fetch contests:", error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchContests()
+    }, [])
+
+    const handleRegister = async (contestId: string) => {
+        setRegisteringId(contestId)
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests/${contestId}/register`, {
+                method: 'POST',
+                credentials: 'include'
+            })
+            
+            if (res.ok) {
+                toast.success("Successfully registered for the contest!")
+                setContests(prev => prev.map(c => 
+                    c.id === contestId ? { ...c, isRegistered: true, registrationCount: c.registrationCount + 1 } : c
+                ))
+            } else {
+                const data = await res.json()
+                toast.error(data.message || "Failed to register")
+            }
+        } catch (error) {
+            toast.error("An error occurred during registration")
+        } finally {
+            setRegisteringId(null)
+        }
+    }
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    }
+
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+    }
+
     return (
         <div className="container mx-auto px-4 max-w-7xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {/* Hero Section */}
@@ -81,7 +122,7 @@ export default function ContestsPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                         <Button className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic tracking-widest uppercase text-sm shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all hover:scale-105 active:scale-95 group">
-                            Next Contest Starts In 02:14:22
+                            Explore Next Rounds
                             <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                         <Button variant="outline" className="h-14 px-8 bg-white/5 border-white/10 hover:bg-white/10 text-white font-bold uppercase tracking-widest text-sm backdrop-blur-md">
@@ -106,54 +147,81 @@ export default function ContestsPage() {
                         </div>
 
                         <div className="space-y-6">
-                            {contests.map((contest, idx) => (
-                                <Card key={contest.id} className="group relative overflow-hidden border-border/40 bg-card/40 backdrop-blur-md hover:bg-card/60 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-primary/50 hover:border-l-primary">
-                                    <CardContent className="p-8">
-                                        <div className="flex flex-col md:flex-row justify-between gap-8">
-                                            <div className="space-y-4 flex-1">
-                                                <div className="flex items-center gap-3">
-                                                    <Badge variant="secondary" className="bg-primary/10 text-primary font-bold px-2 py-0 border-none uppercase text-[10px]">
-                                                        {contest.status}
-                                                    </Badge>
-                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                                                        <Calendar className="size-3.5" /> {contest.date} • {contest.time}
+                            {isLoading ? (
+                                <div className="flex flex-col items-center justify-center py-20 bg-card/20 rounded-3xl border border-dashed border-border/40">
+                                    <Loader2 className="size-8 text-primary animate-spin mb-4" />
+                                    <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Loading Arena...</p>
+                                </div>
+                            ) : contests.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-20 bg-card/20 rounded-3xl border border-dashed border-border/40">
+                                    <Trophy className="size-8 text-muted-foreground/30 mb-4" />
+                                    <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">No upcoming contests scheduled.</p>
+                                </div>
+                            ) : (
+                                contests.map((contest) => (
+                                    <Card key={contest.id} className="group relative overflow-hidden border-border/40 bg-card/40 backdrop-blur-md hover:bg-card/60 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-primary/50 hover:border-l-primary">
+                                        <CardContent className="p-8">
+                                            <div className="flex flex-col md:flex-row justify-between gap-8">
+                                                <div className="space-y-4 flex-1">
+                                                    <div className="flex items-center gap-3">
+                                                        <Badge variant="secondary" className={cn(
+                                                            "font-bold px-2 py-0 border-none uppercase text-[10px]",
+                                                            contest.isRegistered ? "bg-green-500/10 text-green-500" : "bg-primary/10 text-primary"
+                                                        )}>
+                                                            {contest.isRegistered ? "REGISTERED" : "UPCOMING"}
+                                                        </Badge>
+                                                        <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                                                            <Calendar className="size-3.5" /> {formatDate(contest.startTime)} • {formatTime(contest.startTime)}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-2xl font-black italic tracking-tight group-hover:text-primary transition-colors">
+                                                            {contest.title}
+                                                        </h3>
+                                                        <p className="text-muted-foreground font-medium mt-1 leading-relaxed">
+                                                            {contest.description}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-6 pt-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <Users className="size-4 text-primary" />
+                                                            <span className="text-sm font-bold">{(contest.registrationCount / 1000).toFixed(1)}k <span className="text-muted-foreground font-medium">Joined</span></span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <Timer className="size-4 text-primary" />
+                                                            <span className="text-sm font-bold">90 Mins</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-yellow-500">
+                                                            <Trophy className="size-4" />
+                                                            <span className="text-sm font-bold lowercase tracking-tight">{contest.prizes}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-2xl font-black italic tracking-tight group-hover:text-primary transition-colors">
-                                                        {contest.title}
-                                                    </h3>
-                                                    <p className="text-muted-foreground font-medium mt-1 leading-relaxed">
-                                                        {contest.description}
-                                                    </p>
-                                                </div>
-                                                <div className="flex flex-wrap gap-6 pt-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <Users className="size-4 text-primary" />
-                                                        <span className="text-sm font-bold">{contest.participants} <span className="text-muted-foreground font-medium">Joined</span></span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <Timer className="size-4 text-primary" />
-                                                        <span className="text-sm font-bold">{contest.duration}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2 text-yellow-500">
-                                                        <Trophy className="size-4" />
-                                                        <span className="text-sm font-bold lowercase tracking-tight">{contest.prizes}</span>
-                                                    </div>
+                                                <div className="flex flex-row md:flex-col justify-end gap-3 min-w-[120px]">
+                                                    {contest.isRegistered ? (
+                                                        <Button disabled className="w-full h-12 bg-green-500/20 text-green-500 border border-green-500/30 font-black italic uppercase text-xs tracking-widest">
+                                                            Registered
+                                                        </Button>
+                                                    ) : (
+                                                        <Button 
+                                                            onClick={() => handleRegister(contest.id)}
+                                                            disabled={registeringId === contest.id}
+                                                            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic uppercase text-xs tracking-widest shadow-lg shadow-primary/10"
+                                                        >
+                                                            {registeringId === contest.id ? <Loader2 className="size-4 animate-spin" /> : "Register"}
+                                                        </Button>
+                                                    )}
+                                                    <Link href={`/contests/${contest.slug}`}>
+                                                        <Button variant="outline" className="w-full h-12 border-border/40 bg-background/50 text-xs font-bold uppercase tracking-widest">
+                                                            Details
+                                                        </Button>
+                                                    </Link>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-row md:flex-col justify-end gap-3 min-w-[120px]">
-                                                <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic uppercase text-xs tracking-widest shadow-lg shadow-primary/10">
-                                                    Register
-                                                </Button>
-                                                <Button variant="outline" className="w-full h-12 border-border/40 bg-background/50 text-xs font-bold uppercase tracking-widest">
-                                                    Share
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                        </CardContent>
+                                    </Card>
+                                ))
+                            )}
                         </div>
                     </section>
 
@@ -243,11 +311,6 @@ export default function ContestsPage() {
                         </CardContent>
                     </Card>
                 </div>
-            </div>
-            
-            {/* Legend for Icon */}
-            <div className="hidden">
-                 <CheckCircle2 />
             </div>
         </div>
     )

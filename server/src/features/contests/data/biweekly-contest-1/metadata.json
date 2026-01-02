@@ -1,0 +1,10 @@
+{
+  "id": "bc-1",
+  "slug": "biweekly-contest-1",
+  "title": "Biweekly Contest 1",
+  "description": "Challenge yourself with 4 medium to hard problems in 90 minutes.",
+  "startTime": "2026-02-14T15:00:00Z",
+  "endTime": "2026-02-14T16:30:00Z",
+  "prizes": "Exclusive Badge + T-shirt",
+  "problemSlugs": ["median-of-two-sorted-arrays", "palindrome-number", "valid-parentheses", "merge-intervals"]
+}

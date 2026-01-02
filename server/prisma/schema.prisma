@@ -24,6 +24,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
   submissions   Submission[]
+  registrations ContestRegistration[]
+  points        Int       @default(0)
 
   @@unique([email])
   @@map("user")
@@ -109,5 +111,30 @@ model TestCaseResult {
 
   @@index([submissionId])
   @@map("test_case_result")
+}
+
+model Contest {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  startTime   DateTime
+  endTime     DateTime
+  prizes      String?
+  registrations ContestRegistration[]
+  createdAt   DateTime @default(now())
+
+  @@map("contest")
+}
+
+model ContestRegistration {
+  id        String   @id @default(cuid())
+  contestId String
+  contest   Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([contestId, userId])
+  @@map("contest_registration")
 }
 

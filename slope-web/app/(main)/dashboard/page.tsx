@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -16,22 +16,89 @@ import {
     Search,
     Code2,
     BarChart3,
-    Activity
+    Activity,
+    Loader2
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from 'next/link'
+import { authClient } from '@/lib/auth-client'
+
+interface Stats {
+    totalSolved: number;
+    streak: number;
+    easyCount: number;
+    mediumCount: number;
+    hardCount: number;
+}
 
 export default function DashboardPage() {
+    const { data: session } = authClient.useSession();
+    const [stats, setStats] = useState<Stats>({
+        totalSolved: 0,
+        streak: 1,
+        easyCount: 0,
+        mediumCount: 0,
+        hardCount: 0
+    });
+    const [recentProblems, setRecentProblems] = useState<any[]>([]);
+    const [featuredContest, setFeaturedContest] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                // Fetch problems to calculate stats
+                const probRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/problems`, {
+                    credentials: 'include'
+                });
+                const problems = await probRes.json();
+                
+                if (Array.isArray(problems)) {
+                    const solved = problems.filter(p => p.status === 'solved');
+                    setStats({
+                        totalSolved: solved.length,
+                        streak: 12, // Still mock for now as we don't track it in DB yet
+                        easyCount: solved.filter(p => p.difficulty === 'Easy').length,
+                        mediumCount: solved.filter(p => p.difficulty === 'Medium').length,
+                        hardCount: solved.filter(p => p.difficulty === 'Hard').length,
+                    });
+                    setRecentProblems(problems.slice(0, 3));
+                }
+
+                // Fetch contests to get the first upcoming one
+                const contestRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests`);
+                const contests = await contestRes.json();
+                if (Array.isArray(contests) && contests.length > 0) {
+                    setFeaturedContest(contests[0]);
+                }
+            } catch (error) {
+                console.error("Dashboard fetch error:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <Loader2 className="size-8 text-primary animate-spin" />
+            </div>
+        )
+    }
+
     return (
         <div className="container mx-auto px-4 max-w-7xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {/* Top Row: Welcome & Stats Summary */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-8">
                 <div className="space-y-2">
                     <h1 className="text-4xl font-black tracking-tight lg:text-5xl italic">
-                        Welcome back, <span className="text-primary not-italic underline decoration-primary/30 underline-offset-8">Shakib</span>!
+                        Welcome back, <span className="text-primary not-italic underline decoration-primary/30 underline-offset-8">{session?.user?.name?.split(' ')[0] || 'Coder'}</span>!
                     </h1>
                     <p className="text-muted-foreground text-lg font-medium">
-                        You're in the top <span className="text-foreground font-bold italic">5%</span> of solvers this week. Keep it up!
+                        You're on the right path. Keep solving to climb the ranks.
                     </p>
                 </div>
                 
@@ -39,18 +106,18 @@ export default function DashboardPage() {
                     <Card className="flex-1 lg:flex-none min-w-[140px] bg-primary/5 border-primary/10 shadow-xl shadow-primary/5">
                         <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-1">Solved</span>
-                            <div className="text-3xl font-black italic text-primary">42</div>
-                            <span className="text-[10px] text-muted-foreground mt-1">+12 this month</span>
+                            <div className="text-3xl font-black italic text-primary">{stats.totalSolved}</div>
+                            <span className="text-[10px] text-muted-foreground mt-1">Challenge yourself</span>
                         </CardContent>
                     </Card>
                     <Card className="flex-1 lg:flex-none min-w-[140px] bg-orange-500/5 border-orange-500/10 shadow-xl shadow-orange-500/5">
                         <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-1">Streak</span>
                             <div className="flex items-center gap-2">
-                                <span className="text-3xl font-black italic text-orange-500">12</span>
+                                <span className="text-3xl font-black italic text-orange-500">{stats.streak}</span>
                                 <Flame className="size-6 text-orange-500 fill-orange-500" />
                             </div>
-                            <span className="text-[10px] text-muted-foreground mt-1">Best: 24 days</span>
+                            <span className="text-[10px] text-muted-foreground mt-1">Days active</span>
                         </CardContent>
                     </Card>
                 </div>
@@ -76,15 +143,14 @@ export default function DashboardPage() {
                                             <div className="flex gap-2">
                                                 <Badge className="bg-green-500/10 text-green-500 border-none font-bold uppercase text-[10px]">Easy</Badge>
                                                 <Badge className="bg-white/5 text-zinc-400 border-none font-bold uppercase text-[10px]">Array</Badge>
-                                                <Badge className="bg-white/5 text-zinc-400 border-none font-bold uppercase text-[10px]">Hash Table</Badge>
                                             </div>
                                         </div>
                                         <p className="text-zinc-400 text-sm max-w-md font-medium">
-                                            Find two numbers such that they add up to a specific target. A classic foundation of competitive programming.
+                                            The classic foundation. Find two numbers that sum to target.
                                         </p>
                                     </div>
-                                    <Button className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic uppercase tracking-widest text-sm shadow-xl shadow-primary/20 border-b-4 border-primary/70 active:border-b-0 active:translate-y-[2px] transition-all">
-                                        Solve Now <ChevronRight className="ml-2 size-4" />
+                                    <Button className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic uppercase tracking-widest text-sm shadow-xl shadow-primary/20 border-b-4 border-primary/70 active:border-b-0 active:translate-y-[2px] transition-all" asChild>
+                                        <Link href="/problems/two-sum">Solve Now <ChevronRight className="ml-2 size-4" /></Link>
                                     </Button>
                                 </div>
                              </CardContent>
@@ -101,18 +167,17 @@ export default function DashboardPage() {
                             </CardHeader>
                             <CardContent className="space-y-6 pt-2">
                                 {[
-                                    { label: 'Arrays & Hashing', val: 85, color: 'bg-green-500' },
-                                    { label: 'Linked Lists', val: 42, color: 'bg-blue-500' },
-                                    { label: 'Trees & Graphs', val: 18, color: 'bg-orange-500' },
-                                    { label: 'Dynamic Programming', val: 5, color: 'bg-red-500' },
+                                    { label: 'Easy', val: stats.easyCount, max: 3, color: 'bg-green-500' },
+                                    { label: 'Medium', val: stats.mediumCount, max: 4, color: 'bg-orange-500' },
+                                    { label: 'Hard', val: stats.hardCount, max: 1, color: 'bg-red-500' },
                                 ].map((item) => (
                                     <div key={item.label} className="space-y-2">
                                         <div className="flex justify-between text-xs font-bold">
                                             <span className="uppercase tracking-tight">{item.label}</span>
-                                            <span className="italic">{item.val}%</span>
+                                            <span className="italic">{item.val} / {item.max}</span>
                                         </div>
                                         <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                                            <div className={cn("h-full rounded-full transition-all duration-1000", item.color)} style={{ width: `${item.val}%` }} />
+                                            <div className={cn("h-full rounded-full transition-all duration-1000", item.color)} style={{ width: `${(item.val / item.max) * 100}%` }} />
                                         </div>
                                     </div>
                                 ))}
@@ -122,33 +187,31 @@ export default function DashboardPage() {
                         <Card className="border-border/40 bg-card/40 backdrop-blur-sm shadow-xl">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                    <Activity className="size-4 text-primary" /> Recent Activity
+                                    <Activity className="size-4 text-primary" /> Explore More
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="pt-2">
                                  <div className="space-y-4">
-                                    {[
-                                        { title: 'Add Two Numbers', status: 'Accepted', time: '2h ago', points: '+50' },
-                                        { title: 'Median of Two Sorted Arrays', status: 'In Progress', time: '5h ago', points: '---' },
-                                        { title: 'Longest Substring...', status: 'Accepted', time: '1d ago', points: '+100' },
-                                    ].map((act, i) => (
-                                        <div key={i} className="flex items-center justify-between group cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors">
-                                            <div className="flex items-center gap-3">
-                                                <div className={cn(
-                                                    "size-2 rounded-full",
-                                                    act.status === 'Accepted' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-orange-500'
-                                                )} />
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-bold truncate max-w-[150px]">{act.title}</span>
-                                                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{act.time}</span>
+                                    {recentProblems.map((prob, i) => (
+                                        <Link key={prob.id} href={`/problems/${prob.slug}`}>
+                                            <div className="flex items-center justify-between group cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={cn(
+                                                        "size-2 rounded-full",
+                                                        prob.status === 'solved' ? 'bg-green-500' : 'bg-zinc-600'
+                                                    )} />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs font-bold truncate max-w-[150px]">{prob.title}</span>
+                                                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{prob.difficulty}</span>
+                                                    </div>
                                                 </div>
+                                                <ArrowUpRight className="size-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
-                                            <span className="text-[10px] font-black italic text-primary">{act.points}</span>
-                                        </div>
+                                        </Link>
                                     ))}
                                  </div>
-                                 <Button variant="ghost" className="w-full mt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
-                                    View Full History
+                                 <Button variant="ghost" className="w-full mt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors" asChild>
+                                    <Link href="/problemset">View Problemset</Link>
                                  </Button>
                             </CardContent>
                         </Card>
@@ -166,9 +229,9 @@ export default function DashboardPage() {
                                     <Trophy className="size-8 text-primary-foreground" />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-1">Current Standing</div>
-                                    <div className="text-2xl font-black italic">Rank #452</div>
-                                    <div className="text-[10px] font-bold text-muted-foreground">TOP <span className="text-primary">4.2%</span> WORLDWIDE</div>
+                                    <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-1">Global Standing</div>
+                                    <div className="text-2xl font-black italic">Beginner</div>
+                                    <div className="text-[10px] font-bold text-muted-foreground">TOP <span className="text-primary">{((total - stats.totalSolved)/total * 100).toFixed(1)}%</span> WORLDWIDE</div>
                                 </div>
                             </div>
                          </CardContent>
@@ -179,19 +242,21 @@ export default function DashboardPage() {
                         <CardHeader className="pb-2">
                              <div className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-[0.2em] mb-1">
                                 <Star className="size-3 fill-primary" />
-                                <span>Featured Contest</span>
+                                <span>Upcoming Round</span>
                              </div>
                             <CardTitle className="text-xl font-black tracking-tighter italic text-white flex items-center justify-between">
-                                WC432 <ChevronRight className="size-4 group-hover:translate-x-1 transition-transform" />
+                                {featuredContest?.title || "Next Friday Round"} <ChevronRight className="size-4 group-hover:translate-x-1 transition-transform" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              <div className="flex items-center gap-4">
                                 <Clock className="size-4 text-zinc-500" />
-                                <span className="text-xs font-bold text-zinc-400">Starts in 02:14:22</span>
+                                <span className="text-xs font-bold text-zinc-400">
+                                    {featuredContest ? new Date(featuredContest.startTime).toLocaleString() : "TBD"}
+                                </span>
                              </div>
-                             <Button className="w-full bg-white text-black hover:bg-white/90 font-black italic uppercase tracking-widest text-[10px] h-10 shadow-xl shadow-white/5 transition-all active:scale-98">
-                                Register Now
+                             <Button className="w-full bg-white text-black hover:bg-white/90 font-black italic uppercase tracking-widest text-[10px] h-10 shadow-xl shadow-white/5 transition-all active:scale-98" asChild>
+                                <Link href="/contests">Register Now</Link>
                              </Button>
                         </CardContent>
                     </Card>
@@ -201,7 +266,6 @@ export default function DashboardPage() {
                         <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-2">Recommended</h3>
                         <div className="space-y-3">
                             {[
-                                { title: 'Reverse Linked List', diff: 'Easy', slug: 'reverse-linked-list' },
                                 { title: 'Merge Intervals', diff: 'Medium', slug: 'merge-intervals' },
                                 { title: 'Trapping Rain Water', diff: 'Hard', slug: 'trapping-rain-water' },
                             ].map((prob) => (
@@ -227,3 +291,5 @@ export default function DashboardPage() {
         </div>
     )
 }
+
+const total = 8;

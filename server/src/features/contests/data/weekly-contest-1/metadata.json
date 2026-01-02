@@ -1,0 +1,10 @@
+{
+  "id": "wc-1",
+  "slug": "weekly-contest-1",
+  "title": "Weekly Contest 1",
+  "description": "The first weekly contest on Slope! Compete for glory and prizes.",
+  "startTime": "2026-02-01T10:00:00Z",
+  "endTime": "2026-02-01T12:00:00Z",
+  "prizes": "$100 Prize Pool",
+  "problemSlugs": ["two-sum", "add-two-numbers", "longest-substring-without-repeating-characters"]
+}
