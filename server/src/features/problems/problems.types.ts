@@ -18,4 +18,6 @@ export interface Problem {
   functionName: string;
   acceptance?: string;
   starterCode?: Record<string, string>;
+  timeComplexity?: string;
+  spaceComplexity?: string;
 }

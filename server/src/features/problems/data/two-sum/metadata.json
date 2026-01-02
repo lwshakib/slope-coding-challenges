@@ -6,5 +6,7 @@
   "category": "Array",
   "tags": ["Array", "Hash Table"],
   "acceptance": "49.3%",
-  "functionName": "twoSum"
+  "functionName": "twoSum",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
 }

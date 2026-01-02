@@ -1,0 +1,12 @@
+{
+  "id": "6",
+  "slug": "valid-parentheses",
+  "title": "Valid Parentheses",
+  "difficulty": "Easy",
+  "category": "String",
+  "tags": ["String", "Stack"],
+  "acceptance": "40.2%",
+  "functionName": "isValid",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

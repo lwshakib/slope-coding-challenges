@@ -1,0 +1,12 @@
+{
+  "id": "8",
+  "slug": "trapping-rain-water",
+  "title": "Trapping Rain Water",
+  "difficulty": "Hard",
+  "category": "Array",
+  "tags": ["Array", "Two Pointers", "Dynamic Programming", "Stack", "Monotonic Stack"],
+  "acceptance": "60.4%",
+  "functionName": "trap",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "input": "\"()\"",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "\"()[]{}\"",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "\"(]\"",
+    "expectedOutput": "false",
+    "isPublic": true
+  }
+]

@@ -29,7 +29,7 @@ export interface LogoIconProps extends SVGProps<SVGSVGElement> {
 /**
  * A reusable, type-safe React component for the provided SVG logo icon.
  * It is designed to be highly customizable while preserving the original SVG structure.
- * * @param {LogoIconProps} props - The component props, including standard SVG attributes.
+ * @param {LogoIconProps} props - The component props, including standard SVG attributes.
  * @returns {React.ReactElement} The rendered SVG icon.
  */
 export const LogoIcon = ({
@@ -39,11 +39,7 @@ export const LogoIcon = ({
   style,
   ...rest
 }: LogoIconProps): React.ReactElement => {
-  // The original SVG had hardcoded width/height and used fill="#fff".
-  // The component ensures size is set via props and allows fill color to be customized.
-
   const finalStyle: React.CSSProperties = {
-    // We explicitly type the style object for safety
     ...style,
   };
 
@@ -53,20 +49,17 @@ export const LogoIcon = ({
       viewBox="0 0 48 48"
       width={size}
       height={size}
+      fill="none"
       className={className}
       style={finalStyle}
-      // Spread the 'rest' properties (from SVGProps) onto the root element
       {...rest}
     >
-      <g fill={fill}>
-        {/* Main shape: original fill was #fff */}
-        <path d="m35.8177 36.8043c-.5005 1.0368-1.5503 1.6957-2.7016 1.6957h-16.3076c-2.2193 0-3.6703-2.3261-2.6944-4.3193l11.2624-23c.5037-1.0286 1.5491-1.6807 2.6944-1.6807h16.1486c2.212 0 3.6633 2.3122 2.7017 4.3042z" />
-
-        {/* Secondary shape: original fill was #fff with opacity .5 */}
-        <path
-          d="m6.87054 26.7399c1.05114 2.3025 4.30556 2.3487 5.42166.077l6.3838-12.9941c.9793-1.9934-.4716-4.3228-2.6926-4.3228h-12.31585c-2.18399 0-3.6360556 2.2591-2.729061 4.2459z"
-          opacity=".5"
-        />
+      <g fill={fill} transform="translate(4 0)">
+        <path d="m39.9912 23.4176c-.3082-10.7763-9.1408-19.4176-19.9917-19.4176-3.4364 0-6.6703.86666-9.4952 2.39332z"/>
+        <path d="m7.69233 8.23393c-.82777.64708-1.60327 1.35793-2.31912 2.12517l33.75749 19.4899c.3034-.9937.5315-2.0202.6777-3.0728z"/>
+        <path d="m34.6261 37.6406c-.7158.7672-1.4913 1.4781-2.319 2.1252l-32.116401-18.5424c.146207-1.0527.374348-2.0792.677775-3.0728z"/>
+        <path d="m36.523 35.2717-34.54912-19.947c.43665-.9056.93953-1.7733 1.50236-2.5967l34.54906 19.9469c-.4366.9056-.9395 1.7733-1.5023 2.5968z"/>
+        <path d="m19.9995 44c3.4366 0 6.6707-.8667 9.4957-2.3936l-29.4873875-17.0245c.3078965 10.7766 9.1406275 19.4181 19.9916875 19.4181z"/>
       </g>
     </svg>
   );
@@ -103,7 +96,7 @@ export interface LogoWithTextProps {
 }
 
 /**
- * A logo component that displays the LogoIcon alongside the "Vibe" text.
+ * A logo component that displays the LogoIcon alongside the "Slope" text.
  * Perfect for headers, navigation bars, and branding.
  * @param {LogoWithTextProps} props - The component props.
  * @returns {React.ReactElement} The rendered logo with text.
@@ -121,11 +114,13 @@ export const Logo = ({
       <span
         style={{
           fontSize: textSize,
-          fontWeight: 700,
-          letterSpacing: "-0.02em",
+          fontWeight: 900,
+          fontStyle: "italic",
+          letterSpacing: "-0.04em",
+          textTransform: "uppercase"
         }}
       >
-        Vibe
+        Slope
       </span>
     </div>
   );

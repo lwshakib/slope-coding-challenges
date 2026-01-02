@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Play, Send, Settings, CheckCircle, XCircle, Code2, Terminal, BookOpen, Loader2, ListTree } from 'lucide-react'
+import { ArrowLeft, Play, Send, Settings, CheckCircle, XCircle, Code2, Terminal, BookOpen, Loader2, ListTree, History } from 'lucide-react'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
@@ -45,6 +45,17 @@ interface Problem {
     tags: string[];
     testCases: TestCase[];
     starterCode?: Record<string, string>;
+    timeComplexity?: string;
+    spaceComplexity?: string;
+}
+
+interface Submission {
+    id: string;
+    status: string;
+    language: string;
+    createdAt: string;
+    output?: string;
+    runtime?: number;
 }
 
 // Custom CodeMirror theme that strictly follows shadcn design system tokens
@@ -113,6 +124,8 @@ export default function ProblemIDE() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [activeResultTab, setActiveResultTab] = useState("case-0")
     const [bottomTab, setBottomTab] = useState("cases")
+    const [submissions, setSubmissions] = useState<Submission[]>([])
+    const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false)
 
     const parseInput = (input: string) => {
         const parts: { name: string, value: string }[] = [];
@@ -198,6 +211,29 @@ export default function ProblemIDE() {
             if (interval) clearInterval(interval);
         };
     }, [submissionId, submissionStatus]);
+
+    const fetchSubmissions = async () => {
+        setIsLoadingSubmissions(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/submissions/${slug}`, {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                setSubmissions(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch submissions:', error);
+        } finally {
+            setIsLoadingSubmissions(false);
+        }
+    };
+
+    useEffect(() => {
+        if (slug && bottomTab === "submissions") {
+            fetchSubmissions();
+        }
+    }, [slug, bottomTab]);
 
     const handleLanguageChange = (value: string) => {
         setLanguage(value)
@@ -318,7 +354,22 @@ export default function ProblemIDE() {
                                 </div>
                             </div>
                             
-                            <div className="mt-8 flex flex-wrap gap-2">
+                                <div className="mt-6 flex flex-col gap-4">
+                                    {problem.timeComplexity && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground w-32">Time Complexity:</span>
+                                            <Badge variant="outline" className="text-[10px] font-mono border-primary/20 text-primary bg-primary/5">{problem.timeComplexity}</Badge>
+                                        </div>
+                                    )}
+                                    {problem.spaceComplexity && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground w-32">Space Complexity:</span>
+                                            <Badge variant="outline" className="text-[10px] font-mono border-primary/20 text-primary bg-primary/5">{problem.spaceComplexity}</Badge>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mt-8 flex flex-wrap gap-2">
                                 {problem.tags.map(tag => (
                                     <Badge key={tag} variant="secondary" className="text-xs bg-muted text-muted-foreground hover:text-primary transition-colors cursor-pointer">
                                         #{tag}
@@ -385,8 +436,67 @@ export default function ProblemIDE() {
                                         <TabsTrigger value="results" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-2 font-bold text-xs uppercase tracking-widest text-muted-foreground data-[state=active]:text-foreground transition-all">
                                             <Terminal className="size-3.5 mr-2" /> Test Results
                                         </TabsTrigger>
+                                        <TabsTrigger value="submissions" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-2 font-bold text-xs uppercase tracking-widest text-muted-foreground data-[state=active]:text-foreground transition-all">
+                                            <History className="size-3.5 mr-2" /> Submissions
+                                        </TabsTrigger>
                                      </TabsList>
-                                </div>
+                                 </div>
+                                 
+                                 <TabsContent value="submissions" className="flex-1 mt-0 bg-card/30 p-4 overflow-hidden">
+                                     {isLoadingSubmissions ? (
+                                         <div className="h-full flex items-center justify-center">
+                                             <Loader2 className="animate-spin size-6 text-primary" />
+                                         </div>
+                                     ) : submissions.length === 0 ? (
+                                         <div className="h-full flex items-center justify-center text-muted-foreground text-sm font-medium">
+                                             No submissions yet.
+                                         </div>
+                                     ) : (
+                                         <ScrollArea className="h-full pr-4">
+                                             <div className="space-y-3">
+                                                 {submissions.map((sub) => (
+                                                     <div key={sub.id} className="p-3 rounded-lg border border-border/40 bg-background/40 hover:bg-background/60 transition-colors group">
+                                                         <div className="flex items-center justify-between gap-4">
+                                                             <div className="flex items-center gap-3">
+                                                                 {sub.status === "ACCEPTED" ? (
+                                                                     <div className="size-8 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                                                                         <CheckCircle className="size-4 text-green-500" />
+                                                                     </div>
+                                                                 ) : (
+                                                                     <div className="size-8 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                                                                         <XCircle className="size-4 text-red-500" />
+                                                                     </div>
+                                                                 )}
+                                                                 <div>
+                                                                     <div className={cn(
+                                                                         "text-sm font-bold",
+                                                                         sub.status === "ACCEPTED" ? "text-green-500" : "text-red-500"
+                                                                     )}>
+                                                                         {sub.status}
+                                                                     </div>
+                                                                     <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                                                                         {new Date(sub.createdAt).toLocaleString()}
+                                                                     </div>
+                                                                 </div>
+                                                             </div>
+                                                             <div className="flex items-center gap-4">
+                                                                <div className="text-right">
+                                                                    <div className="text-xs font-mono text-foreground">{sub.language}</div>
+                                                                    {sub.runtime !== undefined && (
+                                                                        <div className="text-[10px] text-muted-foreground font-mono">{sub.runtime}ms</div>
+                                                                    )}
+                                                                </div>
+                                                                <Button variant="ghost" size="icon" className="size-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <Code2 className="size-4" />
+                                                                </Button>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 ))}
+                                             </div>
+                                         </ScrollArea>
+                                     )}
+                                </TabsContent>
                                 
                                 <TabsContent value="cases" className="flex-1 mt-0 bg-card/30 p-0 overflow-hidden">
                                     {(() => {

@@ -107,21 +107,17 @@ export default function HeroSection() {
                                     </Link>
                                 </AnimatedGroup>
 
-                                <TextEffect
-                                    preset="fade-in-blur"
-                                    speedSegment={0.3}
-                                    as="h1"
-                                    className="mx-auto mt-8 max-w-4xl text-balance text-5xl max-md:font-semibold md:text-7xl lg:mt-16 xl:text-[5.25rem]">
-                                    Modern Solutions for Customer Engagement
-                                </TextEffect>
+                                <h1 className="mx-auto mt-8 max-w-4xl text-balance text-5xl font-black md:text-7xl lg:mt-16 xl:text-[5.25rem] tracking-tight italic animate-in fade-in-blur slide-in-from-bottom-4 duration-1000">
+                                    Master the Art of <span className="text-primary not-italic underline decoration-primary/30 underline-offset-8">Competitive</span> Coding
+                                </h1>
                                 <TextEffect
                                     per="line"
                                     preset="fade-in-blur"
                                     speedSegment={0.3}
                                     delay={0.5}
                                     as="p"
-                                    className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                                    Highly customizable components for building modern websites and applications that look and feel the way you mean it.
+                                    className="mx-auto mt-8 max-w-2xl text-balance text-lg font-medium text-muted-foreground leading-relaxed">
+                                    The premium platform for technical interview preparation. Solve 3,000+ challenges, compete in global contests, and land your dream role.
                                 </TextEffect>
 
                                 <AnimatedGroup
@@ -139,13 +135,13 @@ export default function HeroSection() {
                                     className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row">
                                     <div
                                         key={1}
-                                        className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5">
+                                        className="bg-primary/20 rounded-[calc(var(--radius-xl)+0.125rem)] border border-primary/30 p-0.5 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
                                         <Button
                                             asChild
                                             size="lg"
-                                            className="rounded-xl px-5 text-base">
-                                            <Link href="#link">
-                                                <span className="text-nowrap">Start Building</span>
+                                            className="rounded-xl px-12 text-base font-black italic uppercase tracking-widest shadow-xl shadow-primary/20">
+                                            <Link href="/problemset">
+                                                <span className="text-nowrap">Start Solving</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -154,9 +150,9 @@ export default function HeroSection() {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-10.5 rounded-xl px-5">
-                                        <Link href="#link">
-                                            <span className="text-nowrap">Request a demo</span>
+                                        className="h-12 rounded-xl px-8 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                                        <Link href="/contests">
+                                            <span className="text-nowrap">Explore Contests</span>
                                         </Link>
                                     </Button>
                                 </AnimatedGroup>

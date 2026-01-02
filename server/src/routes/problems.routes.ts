@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllProblems, getProblemBySlug, submitSolution, getSubmissionStatus } from "../controllers/problems.controller";
+import { getAllProblems, getProblemBySlug, submitSolution, getSubmissionStatus, getSubmissionsBySlug } from "../controllers/problems.controller";
 
 import { requireAuth } from "../middlewares/auth.middlewares";
 
@@ -11,5 +11,6 @@ router.get("/", getAllProblems);
 router.get("/:slug", getProblemBySlug);
 router.post("/submit", submitSolution);
 router.get("/submission/:id", getSubmissionStatus);
+router.get("/submissions/:slug", getSubmissionsBySlug);
 
 export default router;

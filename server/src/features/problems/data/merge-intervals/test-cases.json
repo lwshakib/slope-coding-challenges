@@ -1,0 +1,12 @@
+[
+  {
+    "input": "[[1,3],[2,6],[8,10],[15,18]]",
+    "expectedOutput": "[[1,6],[8,10],[15,18]]",
+    "isPublic": true
+  },
+  {
+    "input": "[[1,4],[4,5]]",
+    "expectedOutput": "[[1,5]]",
+    "isPublic": true
+  }
+]

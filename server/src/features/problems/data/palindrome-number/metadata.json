@@ -6,5 +6,7 @@
   "category": "Math",
   "tags": ["Math"],
   "acceptance": "53.9%",
-  "functionName": "isPalindrome"
+  "functionName": "isPalindrome",
+  "timeComplexity": "O(log10(n))",
+  "spaceComplexity": "O(1)"
 }

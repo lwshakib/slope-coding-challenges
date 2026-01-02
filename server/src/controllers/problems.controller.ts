@@ -88,3 +88,29 @@ export const getSubmissionStatus = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getSubmissionsBySlug = async (req: Request, res: Response) => {
+    const { slug } = req.params;
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const submissions = await prisma.submission.findMany({
+            where: { 
+                problemSlug: slug,
+                userId 
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 20
+        });
+
+        res.json(submissions);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

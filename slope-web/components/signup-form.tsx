@@ -46,7 +46,7 @@ export function SignUpForm({
         return;
       }
 
-      router.push("/workspaces");
+      router.push("/dashboard");
       router.refresh();
     } catch {
       setError("An unexpected error occurred");
@@ -59,7 +59,7 @@ export function SignUpForm({
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: "/workspaces",
+        callbackURL: "/dashboard",
       });
     } catch {
       setError(`Failed to sign up with ${provider}`);

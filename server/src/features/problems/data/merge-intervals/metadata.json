@@ -1,0 +1,12 @@
+{
+  "id": "7",
+  "slug": "merge-intervals",
+  "title": "Merge Intervals",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": ["Array", "Sorting"],
+  "acceptance": "46.2%",
+  "functionName": "merge",
+  "timeComplexity": "O(n log n)",
+  "spaceComplexity": "O(log n) or O(n)"
+}
