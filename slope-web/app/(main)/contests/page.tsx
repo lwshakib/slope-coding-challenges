@@ -22,6 +22,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 interface Contest {
     id: string;
@@ -39,25 +41,24 @@ export default function ContestsPage() {
     const [contests, setContests] = useState<Contest[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [registeringId, setRegisteringId] = useState<string | null>(null)
+    const { data: session, isPending: isSessionLoading } = authClient.useSession()
+    const router = useRouter()
 
     useEffect(() => {
+        if (!isSessionLoading && !session) {
+            router.push("/login")
+            return
+        }
+
         const fetchContests = async () => {
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests`, {
+                    credentials: 'include',
                     cache: 'no-store'
                 })
+                if (!res.ok) throw new Error("Failed to fetch")
                 const data = await res.json()
-                
-                // For each contest, check if user is registered
-                const contestsWithStatus = await Promise.all(data.map(async (c: Contest) => {
-                    const statusRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests/${c.id}/status`, {
-                        credentials: 'include'
-                    })
-                    const statusData = await statusRes.json()
-                    return { ...c, isRegistered: statusData.registered }
-                }))
-                
-                setContests(contestsWithStatus)
+                setContests(data)
             } catch (error) {
                 console.error("Failed to fetch contests:", error)
             } finally {
@@ -65,8 +66,10 @@ export default function ContestsPage() {
             }
         }
 
-        fetchContests()
-    }, [])
+        if (session) {
+            fetchContests()
+        }
+    }, [session, isSessionLoading, router])
 
     const handleRegister = async (contestId: string) => {
         setRegisteringId(contestId)

@@ -2,8 +2,9 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
+import { authClient } from '@/lib/auth-client'
 import { 
     LayoutDashboard, 
     Code2, 
@@ -15,7 +16,8 @@ import {
     ChevronDown,
     Menu,
     X,
-    Flame
+    Flame,
+    LogOut
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -37,7 +39,19 @@ const navItems = [
 
 export function AppHeader() {
     const pathname = usePathname()
+    const router = useRouter()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+    const { data: session } = authClient.useSession()
+
+    const handleLogout = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    router.push("/login")
+                }
+            }
+        })
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl transition-all duration-300">
@@ -102,15 +116,17 @@ export function AppHeader() {
                                 <div className="size-7 rounded-lg bg-primary/10 flex items-center justify-center mr-2 border border-primary/20">
                                     <User className="size-4 text-primary" />
                                 </div>
-                                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">lwshakib</span>
+                                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">
+                                    {session?.user?.name?.split(' ')[0] || 'User'}
+                                </span>
                                 <ChevronDown className="ml-1 size-3 text-muted-foreground" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 rounded-xl border-border/40 bg-background/95 backdrop-blur-xl p-2 shadow-2xl">
                             <DropdownMenuLabel className="px-3 py-2">
                                 <div className="flex flex-col">
-                                    <span className="font-bold text-sm tracking-tight">Shakib Ahmed</span>
-                                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Pro Member</span>
+                                    <span className="font-bold text-sm tracking-tight">{session?.user?.name || 'User'}</span>
+                                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">{session?.user?.email}</span>
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
@@ -120,9 +136,12 @@ export function AppHeader() {
                             <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
                                 <Settings className="size-4 mr-3" /> Settings
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator className="bg-border/40 mx-2" />
-                            <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer text-destructive focus:bg-destructive/5 focus:text-destructive transition-colors">
-                                Sign Out
+                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
+                            <DropdownMenuItem 
+                                onClick={handleLogout}
+                                className="rounded-lg px-3 py-2 cursor-pointer text-destructive focus:bg-destructive/5 focus:text-destructive transition-colors"
+                            >
+                                <LogOut className="size-4 mr-3" /> Sign Out
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

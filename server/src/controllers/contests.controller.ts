@@ -12,7 +12,7 @@ interface AuthRequest extends Request {
     }
 }
 
-export const getContests = async (req: Request, res: Response) => {
+export const getContests = async (req: AuthRequest, res: Response) => {
   try {
     const contestIds = contestRegistry.map(c => c.id);
     

@@ -21,6 +21,8 @@ import {
 import { cn } from "@/lib/utils"
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { authClient } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
 
 interface ContestDetail extends Contest {
     problems: { slug: string; title: string }[];
@@ -43,8 +45,15 @@ export default function ContestDetailPage() {
     const [contest, setContest] = useState<ContestDetail | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isRegistering, setIsRegistering] = useState(false)
+    const { data: session, isPending: isSessionLoading } = authClient.useSession()
+    const router = useRouter()
 
     useEffect(() => {
+        if (!isSessionLoading && !session) {
+            router.push("/login")
+            return
+        }
+
         const fetchContest = async () => {
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contests/s/${slug}`, {
@@ -63,8 +72,10 @@ export default function ContestDetailPage() {
             }
         }
 
-        if (slug) fetchContest()
-    }, [slug])
+        if (session && slug) {
+            fetchContest()
+        }
+    }, [slug, session, isSessionLoading, router])
 
     const handleRegister = async () => {
         if (!contest) return;

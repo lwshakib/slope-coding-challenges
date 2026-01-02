@@ -26,21 +26,3 @@ export const requireAuth = asyncHandler(
     next();
   }
 );
-
-/**
- * Middleware that populates `req.user` if authenticated, but does not enforce it.
- */
-export const optionalAuth = asyncHandler(
-  async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
-
-    if (session) {
-      // @ts-ignore
-      req.user = session.user;
-    }
-
-    next();
-  }
-);
