@@ -50,7 +50,7 @@ export default function ContestDetailPage() {
 
     useEffect(() => {
         if (!isSessionLoading && !session) {
-            router.push("/login")
+            router.push("/sign-in")
             return
         }
 

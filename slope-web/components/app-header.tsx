@@ -47,7 +47,7 @@ export function AppHeader() {
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    router.push("/login")
+                    router.push("/sign-in")
                 }
             }
         })
@@ -116,9 +116,7 @@ export function AppHeader() {
                                 <div className="size-7 rounded-lg bg-primary/10 flex items-center justify-center mr-2 border border-primary/20">
                                     <User className="size-4 text-primary" />
                                 </div>
-                                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">
-                                    {session?.user?.name?.split(' ')[0] || 'User'}
-                                </span>
+                                <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest">{session?.user?.name?.split(' ')[0] || 'User'}</span>
                                 <ChevronDown className="ml-1 size-3 text-muted-foreground" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -136,7 +134,7 @@ export function AppHeader() {
                             <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
                                 <Settings className="size-4 mr-3" /> Settings
                             </DropdownMenuItem>
-                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
+                            <DropdownMenuSeparator className="bg-border/40 mx-2" />
                             <DropdownMenuItem 
                                 onClick={handleLogout}
                                 className="rounded-lg px-3 py-2 cursor-pointer text-destructive focus:bg-destructive/5 focus:text-destructive transition-colors"
