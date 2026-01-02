@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "execution-worker",
+      "name": "javascript",
       "devDependencies": {
         "@types/bun": "latest",
       },

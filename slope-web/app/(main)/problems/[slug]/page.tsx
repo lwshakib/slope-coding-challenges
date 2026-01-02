@@ -110,7 +110,9 @@ export default function ProblemIDE() {
     useEffect(() => {
         const fetchProblem = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/${slug}`)
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/${slug}`, {
+                    credentials: 'include'
+                })
                 if (!response.ok) throw new Error('Problem not found')
                 const data = await response.json()
                 setProblem(data)
@@ -139,6 +141,30 @@ export default function ProblemIDE() {
     const getLanguageExtension = (lang: string) => {
         if (lang === 'python') return [python()]
         return [javascript({ typescript: lang === 'typescript' })]
+    }
+
+    const handleRunOrSubmit = async (type: "test" | "submit") => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    code,
+                    language,
+                    problemSlug: slug,
+                    submitType: type
+                }),
+            })
+            
+            const data = await response.json()
+            console.log('Submission response:', data)
+            
+        } catch (error) {
+            console.error('Failed to submit:', error)
+        }
     }
 
     if (isLoading) {
@@ -187,10 +213,10 @@ export default function ProblemIDE() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="gap-2 font-bold tracking-wide uppercase text-xs h-9">
+                    <Button onClick={() => handleRunOrSubmit("test")} variant="outline" size="sm" className="gap-2 font-bold tracking-wide uppercase text-xs h-9">
                         <Play className="size-3.5 fill-current" /> Run
                     </Button>
-                    <Button size="sm" className="gap-2 font-bold tracking-wide uppercase text-xs h-9 shadow-lg shadow-primary/20">
+                    <Button onClick={() => handleRunOrSubmit("submit")} size="sm" className="gap-2 font-bold tracking-wide uppercase text-xs h-9 shadow-lg shadow-primary/20">
                         <Send className="size-3.5 fill-current" /> Submit
                     </Button>
                 </div>

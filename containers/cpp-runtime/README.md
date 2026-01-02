@@ -1,4 +1,4 @@
-# execution-worker
+# cpp
 
 To install dependencies:
 

@@ -23,6 +23,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  submissions   Submission[]
 
   @@unique([email])
   @@map("user")
@@ -74,4 +75,20 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problemSlug String
+  code        String
+  language    String
+  status      String   @default("PENDING") // PENDING, ACCEPTED, FAILED
+  output      String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([problemSlug])
+  @@map("submission")
 }

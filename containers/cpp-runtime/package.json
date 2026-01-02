@@ -1,5 +1,5 @@
 {
-  "name": "execution-worker",
+  "name": "cpp",
   "module": "index.ts",
   "type": "module",
   "private": true,

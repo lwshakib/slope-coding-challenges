@@ -15,3 +15,15 @@ export const getProblemBySlug = (req: Request, res: Response) => {
   
   res.json(problem);
 };
+
+export const submitSolution = (req: Request, res: Response) => {
+    // Log the submission code
+    console.log(req.body);
+
+    const submitId = Math.random().toString(36).substring(7);
+
+    res.json({
+        success: true,
+        submitId
+    });
+};
