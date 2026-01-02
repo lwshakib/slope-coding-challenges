@@ -13,20 +13,5 @@
     "input": "x = 10",
     "expectedOutput": "false",
     "isPublic": true
-  },
-  {
-    "input": "x = 0",
-    "expectedOutput": "true",
-    "isPublic": false
-  },
-  {
-    "input": "x = 12321",
-    "expectedOutput": "true",
-    "isPublic": false
-  },
-  {
-    "input": "x = 123456",
-    "expectedOutput": "false",
-    "isPublic": false
   }
 ]

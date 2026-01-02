@@ -1,5 +1,5 @@
 {
-  "javascript": "/**\n * Definition for singly-linked list.\n * function ListNode(val, next) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.next = (next===undefined ? null : next)\n * }\n */\n/**\n * @param {ListNode} l1\n * @param {ListNode} l2\n * @return {ListNode}\n */\nvar addTwoNumbers = function(l1, l2) {\n    \n};",
-  "typescript": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     val: number\n *     next: ListNode | null\n *     constructor(val?: number, next?: ListNode | null) {\n *         this.val = (val===undefined ? 0 : val)\n *         this.next = (next===undefined ? null : next)\n *     }\n * }\n */\n\nfunction addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n    \n};",
-  "python": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        "
+  "javascript": "/**\n * @param {number[]} l1\n * @param {number[]} l2\n * @return {number[]}\n */\nvar addTwoNumbers = function(l1, l2) {\n    \n};",
+  "python": "class Solution(object):\n    def addTwoNumbers(self, l1, l2):\n        \"\"\"\n        :type l1: List[int]\n        :type l2: List[int]\n        :rtype: List[int]\n        \"\"\"\n        pass",
+  "cpp": "class Solution {\npublic:\n    vector<int> addTwoNumbers(vector<int>& l1, vector<int>& l2) {\n        \n    }\n};"
 }

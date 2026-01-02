@@ -15,6 +15,7 @@ export interface Problem {
   category: string;
   tags: string[];
   testCases: TestCase[];
+  functionName: string;
   acceptance?: string;
   starterCode?: Record<string, string>;
 }

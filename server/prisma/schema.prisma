@@ -87,8 +87,27 @@ model Submission {
   status      String   @default("PENDING") // PENDING, ACCEPTED, FAILED
   output      String?
   createdAt   DateTime @default(now())
+  testResults TestCaseResult[]
 
   @@index([userId])
   @@index([problemSlug])
   @@map("submission")
 }
+
+model TestCaseResult {
+  id           String     @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  caseIdx      Int
+  status       String     // PASSED, FAILED, RUNTIME_ERROR, etc.
+  input        String
+  expected     String
+  actual       String?
+  error        String?
+  runtime      Int?       // ms
+  createdAt    DateTime   @default(now())
+
+  @@index([submissionId])
+  @@map("test_case_result")
+}
+

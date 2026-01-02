@@ -20,28 +20,54 @@ services:
       retries: 5
 
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: mailhog
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
     restart: unless-stopped
     ports:
-      - "1025:1025" # SMTP server
-      - "8025:8025" # Web UI
-    networks:
-      - default
+      - "5672:5672"   # RabbitMQ port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--quiet",
-          "--tries=1",
-          "--spider",
-          "http://localhost:8025",
-        ]
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
+
+  cpp-runtime:
+    build:
+      context: ./containers/cpp-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    deploy:
+      replicas: 3
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  javascript-runtime:
+    build:
+      context: ./containers/javascript-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    deploy:
+      replicas: 3
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  python-runtime:
+    build:
+      context: ./containers/python-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    deploy:
+      replicas: 3
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   postgres_data:

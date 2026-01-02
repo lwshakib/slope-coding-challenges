@@ -70,11 +70,19 @@ export default function ProblemSetPage() {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems`)
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems`, {
+                    credentials: 'include'
+                })
                 const data = await response.json()
-                setProblems(data)
+                if (Array.isArray(data)) {
+                    setProblems(data)
+                } else {
+                    console.error('Expected array of problems, got:', data)
+                    setProblems([])
+                }
             } catch (error) {
                 console.error('Failed to fetch problems:', error)
+                setProblems([])
             } finally {
                 setIsLoading(false)
             }
@@ -226,7 +234,7 @@ export default function ProblemSetPage() {
                                                         {problem.id}. {problem.title}
                                                     </span>
                                                     <div className="flex gap-2 mt-1">
-                                                        {problem.tags.slice(0, 3).map(tag => (
+                                                        {problem.tags?.slice(0, 3).map(tag => (
                                                             <span key={tag} className="text-[10px] font-medium text-muted-foreground/60 hover:text-primary transition-colors">
                                                                 #{tag}
                                                             </span>

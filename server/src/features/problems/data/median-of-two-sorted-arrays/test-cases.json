@@ -13,20 +13,5 @@
     "input": "nums1 = [0,0], nums2 = [0,0]",
     "expectedOutput": "0.00000",
     "isPublic": true
-  },
-  {
-    "input": "nums1 = [], nums2 = [1]",
-    "expectedOutput": "1.00000",
-    "isPublic": false
-  },
-  {
-    "input": "nums1 = [2], nums2 = []",
-    "expectedOutput": "2.00000",
-    "isPublic": false
-  },
-  {
-    "input": "nums1 = [1,2,3,4,5], nums2 = [6,7,8,9,10]",
-    "expectedOutput": "5.50000",
-    "isPublic": false
   }
 ]

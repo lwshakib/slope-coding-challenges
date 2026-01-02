@@ -5,5 +5,6 @@
   "difficulty": "Hard",
   "category": "Binary Search",
   "tags": ["Array", "Binary Search", "Divide and Conquer"],
-  "acceptance": "35.6%"
+  "acceptance": "35.6%",
+  "functionName": "findMedianSortedArrays"
 }

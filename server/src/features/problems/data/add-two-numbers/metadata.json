@@ -5,5 +5,6 @@
   "difficulty": "Medium",
   "category": "Linked List",
   "tags": ["Linked List", "Math", "Recursion"],
-  "acceptance": "40.2%"
+  "acceptance": "40.2%",
+  "functionName": "addTwoNumbers"
 }

@@ -7,6 +7,7 @@ import { ArrowLeft, Play, Send, Settings, CheckCircle, XCircle, Code2, Terminal,
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
+import { cpp } from '@codemirror/lang-cpp'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags as t } from '@lezer/highlight'
 
@@ -104,8 +105,43 @@ export default function ProblemIDE() {
     const slug = params.slug as string
     const [problem, setProblem] = useState<Problem | null>(null)
     const [isLoading, setIsLoading] = useState(true)
-    const [language, setLanguage] = useState("typescript")
+    const [language, setLanguage] = useState("javascript")
     const [code, setCode] = useState("")
+    const [submissionId, setSubmissionId] = useState<string | null>(null)
+    const [submissionStatus, setSubmissionStatus] = useState<string | null>(null)
+    const [submissionOutput, setSubmissionOutput] = useState<string | null>(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [activeResultTab, setActiveResultTab] = useState("case-0")
+    const [bottomTab, setBottomTab] = useState("cases")
+
+    const parseInput = (input: string) => {
+        const parts: { name: string, value: string }[] = [];
+        let current = "";
+        let bracketCount = 0;
+        for (let i = 0; i < input.length; i++) {
+            if (input[i] === "[" || input[i] === "{") bracketCount++;
+            if (input[i] === "]" || input[i] === "}") bracketCount--;
+            if (input[i] === "," && bracketCount === 0) {
+                const [name, val] = current.split("=");
+                if (name && val) parts.push({ name: name.trim(), value: val.trim() });
+                current = "";
+            } else {
+                current += input[i];
+            }
+        }
+        const [name, val] = current.split("=");
+        if (name && val) parts.push({ name: name.trim(), value: val.trim() });
+        return parts;
+    }
+
+    const getParsedResults = () => {
+        if (!submissionOutput) return [];
+        try {
+            return JSON.parse(submissionOutput);
+        } catch (e) {
+            return [];
+        }
+    }
 
     useEffect(() => {
         const fetchProblem = async () => {
@@ -118,8 +154,8 @@ export default function ProblemIDE() {
                 setProblem(data)
                 
                 // Set initial code based on default language
-                if (data.starterCode && data.starterCode["typescript"]) {
-                    setCode(data.starterCode["typescript"])
+                if (data.starterCode && data.starterCode["javascript"]) {
+                    setCode(data.starterCode["javascript"])
                 }
             } catch (error) {
                 console.error('Failed to fetch problem:', error)
@@ -131,6 +167,38 @@ export default function ProblemIDE() {
         if (slug) fetchProblem()
     }, [slug])
 
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+
+        if (submissionId && (submissionStatus === "PENDING" || !submissionStatus)) {
+            interval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/submission/${submissionId}`, {
+                        credentials: 'include',
+                        cache: 'no-store'
+                    });
+                    const data = await response.json();
+                    
+                    console.log('Poll result:', data.status);
+                    
+                    if (data.status !== "PENDING") {
+                        setSubmissionStatus(data.status);
+                        setSubmissionOutput(data.output);
+                        setIsSubmitting(false);
+                        clearInterval(interval);
+                    }
+                } catch (error) {
+                    console.error('Failed to poll submission status:', error);
+                    clearInterval(interval);
+                }
+            }, 2000);
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [submissionId, submissionStatus]);
+
     const handleLanguageChange = (value: string) => {
         setLanguage(value)
         if (problem?.starterCode?.[value]) {
@@ -140,10 +208,16 @@ export default function ProblemIDE() {
 
     const getLanguageExtension = (lang: string) => {
         if (lang === 'python') return [python()]
-        return [javascript({ typescript: lang === 'typescript' })]
+        if (lang === 'cpp') return [cpp()]
+        return [javascript()]
     }
 
     const handleRunOrSubmit = async (type: "test" | "submit") => {
+        setIsSubmitting(true);
+        setSubmissionStatus("PENDING");
+        setSubmissionOutput(null);
+        setBottomTab("results");
+        
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000'}/api/problems/submit`, {
                 method: 'POST',
@@ -154,16 +228,21 @@ export default function ProblemIDE() {
                 body: JSON.stringify({
                     code,
                     language,
-                    problemSlug: slug,
+                    slug,
                     submitType: type
                 }),
             })
             
             const data = await response.json()
-            console.log('Submission response:', data)
+            if (data.submissionId) {
+                setSubmissionId(data.submissionId);
+            } else {
+                setIsSubmitting(false);
+            }
             
         } catch (error) {
             console.error('Failed to submit:', error)
+            setIsSubmitting(false);
         }
     }
 
@@ -271,8 +350,8 @@ export default function ProblemIDE() {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="javascript">JavaScript</SelectItem>
-                                                <SelectItem value="typescript">TypeScript</SelectItem>
                                                 <SelectItem value="python">Python</SelectItem>
+                                                <SelectItem value="cpp">C++</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <Button variant="ghost" size="icon" className="size-7 text-muted-foreground hover:text-foreground">
@@ -297,7 +376,7 @@ export default function ProblemIDE() {
 
                         {/* Bottom Right: Test Cases & Results */}
                         <ResizablePanel defaultSize={40} minSize={20}>
-                            <Tabs defaultValue="cases" className="h-full flex flex-col">
+                            <Tabs value={bottomTab} onValueChange={setBottomTab} className="h-full flex flex-col">
                                 <div className="flex items-center justify-between px-2 pt-2 bg-muted/20 border-b border-border/40">
                                      <TabsList className="h-8 bg-transparent p-0 gap-4">
                                         <TabsTrigger value="cases" className="h-full rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-2 font-bold text-xs uppercase tracking-widest text-muted-foreground data-[state=active]:text-foreground transition-all">
@@ -377,14 +456,143 @@ export default function ProblemIDE() {
                                     })()}
                                 </TabsContent>
                                 
-                                <TabsContent value="results" className="flex-1 mt-0 bg-card/30 p-0 flex items-center justify-center text-muted-foreground">
-                                    <div className="text-center space-y-2 p-8">
-                                        <div className="size-12 rounded-full bg-muted/20 flex items-center justify-center mx-auto mb-4">
-                                            <Play className="size-5 text-muted-foreground/50 ml-1" />
+                                <TabsContent value="results" className="flex-1 mt-0 bg-card/30 p-0 flex flex-col overflow-hidden">
+                                    {isSubmitting ? (
+                                        <div className="h-full flex flex-col items-center justify-center gap-4 text-muted-foreground bg-background/20 backdrop-blur-sm">
+                                            <div className="relative">
+                                                <div className="size-16 rounded-full border-2 border-primary/20 animate-[spin_3s_linear_infinite]" />
+                                                <div className="size-16 rounded-full border-t-2 border-primary animate-spin absolute inset-0" />
+                                                <Loader2 className="animate-spin size-6 text-primary absolute inset-0 m-auto" />
+                                            </div>
+                                            <div className="space-y-1 text-center">
+                                                <p className="text-sm font-bold tracking-tight text-foreground">Evaluating your solution</p>
+                                                <p className="text-xs text-muted-foreground animate-pulse font-medium">Running through test cases...</p>
+                                            </div>
                                         </div>
-                                        <p className="text-sm font-bold">No results yet</p>
-                                        <p className="text-xs max-w-[200px] mx-auto text-muted-foreground/60">Run your code to see test results here.</p>
-                                    </div>
+                                    ) : submissionStatus ? (
+                                        (() => {
+                                            const results = getParsedResults();
+                                            const totalRuntime = results.reduce((acc: number, r: any) => acc + (r.runtime || 0), 0);
+                                            const isAccepted = submissionStatus === "ACCEPTED";
+                                            
+                                            if (results.length === 0 && submissionStatus !== "PENDING") {
+                                                return (
+                                                    <div className="p-6 space-y-4">
+                                                        <div className="flex items-center gap-2 text-destructive">
+                                                            <XCircle className="size-5" />
+                                                            <h3 className="text-lg font-bold">Execution Error</h3>
+                                                        </div>
+                                                        <pre className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg text-xs font-mono text-destructive overflow-auto whitespace-pre-wrap">
+                                                            {submissionOutput}
+                                                        </pre>
+                                                    </div>
+                                                );
+                                            }
+
+                                            return (
+                                                <div className="h-full flex flex-col overflow-hidden">
+                                                    {/* Success/Failure Header */}
+                                                    <div className="p-4 flex items-center justify-between border-b border-border/20 bg-muted/5">
+                                                        <div className="flex items-center gap-3">
+                                                            <h2 className={cn(
+                                                                "text-xl font-black tracking-tight",
+                                                                isAccepted ? "text-green-500" : "text-destructive"
+                                                            )}>
+                                                                {isAccepted ? "Accepted" : "Wrong Answer"}
+                                                            </h2>
+                                                            <span className="text-xs font-bold text-muted-foreground/60 mt-1">
+                                                                Runtime: {totalRuntime} ms
+                                                            </span>
+                                                        </div>
+                                                        {!isAccepted && (
+                                                            <Button variant="ghost" size="sm" className="text-blue-500 font-bold hover:text-blue-600 hover:bg-blue-500/5 text-xs">
+                                                                Diff
+                                                            </Button>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Test Case Selection */}
+                                                    <div className="px-4 pt-3 border-b border-border/10 bg-muted/5">
+                                                        <Tabs value={activeResultTab} onValueChange={setActiveResultTab} className="w-full">
+                                                            <TabsList className="bg-transparent p-0 h-9 gap-3 w-full justify-start overflow-x-auto no-scrollbar">
+                                                                {results.map((res: any, idx: number) => (
+                                                                    <TabsTrigger 
+                                                                        key={idx} 
+                                                                        value={`case-${idx}`}
+                                                                        className={cn(
+                                                                            "h-9 rounded-t-lg rounded-b-none border border-transparent px-4 font-bold text-xs uppercase tracking-wider transition-all gap-2",
+                                                                            "data-[state=active]:border-border/20 data-[state=active]:bg-background data-[state=active]:text-foreground",
+                                                                            res.status === "PASSED" ? "text-green-500/70" : "text-destructive/70"
+                                                                        )}
+                                                                    >
+                                                                        {res.status === "PASSED" ? (
+                                                                            <CheckCircle className="size-3" />
+                                                                        ) : (
+                                                                            <XCircle className="size-3" />
+                                                                        )}
+                                                                        Case {idx + 1}
+                                                                    </TabsTrigger>
+                                                                ))}
+                                                            </TabsList>
+                                                        </Tabs>
+                                                    </div>
+
+                                                    {/* Selected Case Details */}
+                                                    <div className="flex-1 overflow-auto p-4 space-y-6">
+                                                        {results.map((res: any, idx: number) => (
+                                                            <div key={idx} className={cn(activeResultTab === `case-${idx}` ? "block" : "hidden", "space-y-6")}>
+                                                                {/* Input */}
+                                                                <div className="space-y-3">
+                                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">Input</h4>
+                                                                    <div className="space-y-2">
+                                                                        {parseInput(res.input).map((part, pIdx) => (
+                                                                            <div key={pIdx} className="space-y-1">
+                                                                                <div className="text-[11px] font-bold text-muted-foreground/80 font-mono ml-1">{part.name} =</div>
+                                                                                <div className="bg-muted/30 border border-border/20 rounded-lg p-3 pt-2 font-mono text-sm shadow-sm group hover:border-border/40 transition-colors">
+                                                                                    {part.value}
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Output */}
+                                                                <div className="space-y-3">
+                                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">Output</h4>
+                                                                    <div className={cn(
+                                                                        "rounded-lg p-3 font-mono text-sm border shadow-sm transition-all",
+                                                                        res.status === "PASSED" 
+                                                                            ? "bg-muted/30 border-border/20" 
+                                                                            : "bg-destructive/5 border-destructive/20 text-destructive"
+                                                                    )}>
+                                                                        {res.actual || res.error || "No output"}
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Expected */}
+                                                                <div className="space-y-3">
+                                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">Expected</h4>
+                                                                    <div className="bg-muted/30 border border-border/20 rounded-lg p-3 font-mono text-sm shadow-sm">
+                                                                        {res.expected}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center text-center space-y-4 p-8">
+                                            <div className="size-20 rounded-full bg-muted/5 flex items-center justify-center mx-auto border border-border/5 group-hover:scale-105 transition-transform duration-500">
+                                                <Play className="size-8 text-muted-foreground/20 ml-1" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-bold text-foreground tracking-tight">Ready to Run</p>
+                                                <p className="text-xs max-w-[240px] mx-auto text-muted-foreground/50 leading-relaxed font-medium">Submit your code to see comprehensive test results and performance analysis here.</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </TabsContent>
                             </Tabs>
                         </ResizablePanel>
