@@ -1,92 +1,120 @@
-# 🏔️ Slope - Modern Coding Challenges Platform
+# 🏔️ Slope - Distributed Coding Challenges Platform
 
 [![Developed by](https://img.shields.io/badge/Developed%20by-lwshakib-blueviolet?style=for-the-badge&logo=github)](https://github.com/lwshakib)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-Slope is a high-performance, developer-centric platform for mastering algorithms and data structures. Inspired by industry leaders like LeetCode and Codeforces, Slope aims to provide a seamless, interactive environment for solving coding challenges, tracking progress, and preparing for technical interviews.
+**Slope** is a modern, high-performance platform for mastering algorithms and data structures. It combines a beautiful, developer-centric frontend with a robust, distributed backend capable of securely executing code in multiple languages.
+
+<br />
+
+<div align="center">
+  <img src="slope-web/public/light.png" alt="Slope Light Mode" width="45%" />
+  &nbsp;
+  <img src="slope-web/public/dark.png" alt="Slope Dark Mode" width="45%" />
+</div>
+
+<br />
 
 ---
 
-## ⛰️ Why Slope?
+## 🏗️ System Architecture
 
-In the fast-paced world of software engineering, consistent practice is the only way to stay sharp. Slope is designed to:
-- **Minimize Friction**: Get from problem discovery to code execution in seconds.
-- **Enhance Learning**: Detailed feedback and performance metrics to help you understand *where* you can improve.
-- **Foster Community**: A place to share solutions, discuss strategies, and grow together.
+Slope is built as a distributed system to ensure scalability and security:
 
----
+```mermaid
+graph TD
+    User[User / Web Client] -->|HTTP/REST| API[API Server]
+    API -->|Submit Job| Queue[RabbitMQ]
+    API -->|Read/Write| DB[(PostgreSQL)]
+    Queue -->|Consume| Worker[Worker Service]
+    Worker -->|Spin up| Container[Runtime Containers]
+    Container -->|Result| Worker
+    Worker -->|Update| DB
+```
 
-## ✨ Features (Planned)
+### Core Components
 
-- **🚀 Integrated Development Environment**: A powerful web-based code editor with syntax highlighting, autocomplete, and multi-language support.
-- **🧪 Real-time Testing**: Execute your code against pre-defined test cases and see results instantly.
-- **📊 Comprehensive Problem Sets**: A curated list of problems ranging from "Easy" to "Hard", categorized by topics (Arrays, DP, Graphs, etc.).
-- **🏆 Leaderboards & Progress Tracking**: Compete with others and visualize your growth over time.
-- **🔒 Secure Sandbox Execution**: Code execution is handled in an isolated environment to ensure security and performance.
+1.  **[Slope Web (`/slope-web`)](./slope-web/README.md)**: The Next.js frontend. Features a rich IDE, dashboards, and detailed analytics.
+2.  **[Slope Server (`/server`)](./server/README.md)**: The Node.js/Bun backend. Handles auth, problem management, and acts as the API gateway.
+3.  **Workers & Runtimes (`/containers`)**:
+    -   **Worker System**: Consumes submission jobs from RabbitMQ.
+    -   **[Javascript Runtime](./containers/javascript-runtime/README.md)**: Isolated Docker environment for JS execution.
+    -   **[Python Runtime](./containers/python-runtime/README.md)**: Isolated Docker environment for Python execution.
+    -   **[C++ Runtime](./containers/cpp-runtime/README.md)**: Isolated Docker environment for C++ compilation and execution.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: [Next.js](https://nextjs.org/) (App Router), [Tailwind CSS](https://tailwindcss.com/)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand) / [React Query](https://tanstack.com/query/latest)
-- **Icons & UI**: [Lucide React](https://lucide.dev/), [Shadcn/UI](https://ui.shadcn.com/)
-- **Backend**: (In Development) Node.js / Go
-- **Database**: (In Development) PostgreSQL / Redis
-- **Containerization**: Docker (for execution sandbox)
+-   **Frontend**: Next.js 16, Tailwind CSS v4, Shadcn/UI, Zustand.
+-   **Backend**: Bun, Express.js, Prisma ORM.
+-   **Infrastructure**: Docker, RabbitMQ, PostgreSQL.
+-   **Languages Supported**: JavaScript, Python, C++.
 
 ---
 
 ## 🚀 Getting Started
 
-*Note: This project is currently in the initial design and development phase.*
-
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [Bun](https://bun.sh/) (Recommended)
+-   [Docker](https://www.docker.com/) & Docker Compose
+-   [Bun](https://bun.sh/) (v1.0+)
 
-### Installation
+### 1. Clone the Repository
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/lwshakib/slope-coding-challenges.git
-   cd slope-coding-challenges
-   ```
+```bash
+git clone https://github.com/lwshakib/slope-coding-challenges.git
+cd slope-coding-challenges
+```
 
-2. **Navigate to the web application**:
-   ```bash
-   cd slope-web
-   ```
+### 2. Start Infrastructure Services
 
-3. **Install dependencies**:
-   ```bash
-   bun install
-   ```
+Use Docker Compose to spin up the database and message queue.
 
-4. **Run the development server**:
-   ```bash
-   bun dev
-   ```
+```bash
+docker-compose up -d postgres rabbitmq
+```
+
+### 3. Setup the Server
+
+Navigate to the server directory, install dependencies, and migrate the database.
+
+```bash
+cd server
+bun install
+cp .env.example .env # Configure your DB/RabbitMQ creds
+bun run db:migrate
+
+bun dev
+```
+
+### 4. Setup the Frontend
+
+In a new terminal, navigate to the web client directory.
+
+```bash
+cd slope-web
+bun install
+bun dev
+```
+
+Access the app at `http://localhost:3000`.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
-
----
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build the runtimes locally.
 
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
 ## 👨‍💻 Author
 
 **lwshakib**
-- GitHub: [@lwshakib](https://github.com/lwshakib)
+
+-   GitHub: [@lwshakib](https://github.com/lwshakib)
 
 ---
 
