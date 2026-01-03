@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
@@ -18,23 +17,23 @@ import { Logo } from "./logo";
 
 const data = () => ({
   navigation: {
-    product: [
-      { name: "Features", href: "#features" },
-      { name: "Workspaces", href: "/workspaces" },
-      { name: "Templates", href: "#" },
+    platform: [
+      { name: "Problemset", href: "/problemset" },
+      { name: "Contests", href: "/contests" },
+      { name: "Leaderboard", href: "/leaderboard" },
       { name: "Pricing", href: "#pricing" },
     ],
-    developers: [
-      { name: "Documentation", href: "#" },
-      { name: "API Reference", href: "#" },
-      { name: "Guides & Tutorials", href: "#" },
-      { name: "Examples", href: "#" },
+    company: [
+      { name: "About Us", href: "#about" },
+      { name: "Careers", href: "#" },
+      { name: "Blog", href: "#" },
+      { name: "Brand Assets", href: "#" },
     ],
     resources: [
-      { name: "Community", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Changelog", href: "#" },
-      { name: "Support", href: "#" },
+      { name: "Documentation", href: "#" },
+      { name: "Community Discord", href: "#" },
+      { name: "Service Status", href: "#" },
+      { name: "Help Center", href: "#" },
     ],
     legal: [
       { name: "Privacy Policy", href: "/privacy" },
@@ -49,9 +48,9 @@ const data = () => ({
     { icon: Linkedin, label: "LinkedIn", href: "#" },
   ],
   bottomLinks: [
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms of Service" },
-    { href: "/cookies", label: "Cookie Policy" },
+    { href: "/privacy", label: "Privacy" },
+    { href: "/terms", label: "Terms" },
+    { href: "/cookies", label: "Cookies" },
   ],
 });
 
@@ -68,21 +67,17 @@ export default function FooterSection() {
   if (!mounted) return null;
 
   return (
-    <footer className="mt-20 w-full">
-      <div className="animate-energy-flow via-primary h-px w-full bg-gradient-to-r from-transparent to-transparent" />
-      <div className="relative w-full px-5">
+    <footer className="w-full bg-background border-t border-border/40">
+      <div className="relative w-full px-5 py-16">
         {/* Top Section */}
-        <div className="container m-auto grid grid-cols-1 gap-12 py-12 md:grid-cols-2 lg:grid-cols-5">
+        <div className="container m-auto grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-5">
           {/* Company Info */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-8 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <Logo />
-     
             </Link>
-            <p className="text-muted-foreground max-w-md">
-              The ultimate AI-powered coding platform. Build, preview, and
-              deploy full-stack applications directly in your browser with
-              WebContainer technology.
+            <p className="text-muted-foreground max-w-sm font-medium leading-relaxed italic">
+              The premier platform for technical interview preparation. Master algorithms, compete in global rounds, and land your dream role at top tech companies.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
@@ -92,7 +87,7 @@ export default function FooterSection() {
                     size="icon"
                     variant="outline"
                     asChild
-                    className="hover:bg-primary dark:hover:bg-primary !border-primary/30 !hover:border-primary cursor-pointer shadow-none transition-all duration-500 hover:scale-110 hover:-rotate-12 hover:text-white hover:shadow-md"
+                    className="hover:bg-primary hover:text-primary-foreground border-border/40 cursor-pointer shadow-none transition-all duration-500 hover:scale-110 hover:-rotate-12"
                   >
                     <Link href={href}>
                       <Icon className="h-4 w-4" />
@@ -104,7 +99,7 @@ export default function FooterSection() {
                 variant="outline"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="hover:bg-primary dark:hover:bg-primary !border-primary/30 !hover:border-primary cursor-pointer shadow-none transition-all duration-1000 hover:scale-110 hover:-rotate-12 hover:text-white hover:shadow-md"
+                className="hover:bg-primary hover:text-primary-foreground border-border/40 cursor-pointer shadow-none transition-all duration-500 hover:scale-110 hover:rotate-12"
               >
                 {theme === "dark" ? (
                   <Sun className="h-4 w-4" />
@@ -114,54 +109,45 @@ export default function FooterSection() {
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </div>
+            
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="w-full max-w-md space-y-3"
+              className="w-full max-w-sm space-y-4 pt-4"
             >
-              <label htmlFor="email" className="block text-sm font-medium">
-                Stay updated with Vibe
-              </label>
+              <h4 className="text-sm font-black italic uppercase tracking-widest text-foreground">Subscribe to Slope Monthly</h4>
               <div className="relative w-full">
                 <Input
                   type="email"
-                  id="email"
                   placeholder="Enter your email"
-                  className="h-12 w-full"
+                  className="h-12 w-full rounded-xl bg-muted/50 border-border/40 focus:border-primary/50 transition-all font-medium"
                   required
                 />
                 <Button
                   type="submit"
-                  className="absolute top-1.5 right-1.5 cursor-pointer transition-all duration-1000 hover:px-10"
+                  className="absolute top-1.5 right-1.5 h-9 rounded-lg font-bold uppercase tracking-widest text-[10px] px-4"
                 >
-                  Subscribe
+                  Join
                 </Button>
               </div>
-              <p className="text-muted-foreground text-xs">
-                Get tips, tutorials, and platform updates delivered to your
-                inbox.
-              </p>
             </form>
-            <h1 className="from-muted-foreground/15 bg-gradient-to-b bg-clip-text text-5xl font-extrabold text-transparent lg:text-7xl">
-              Code
-            </h1>
           </div>
 
           {/* Navigation Links */}
-          <div className="grid w-full grid-cols-2 items-start justify-between gap-8 px-5 lg:col-span-3">
-            {(["product", "developers", "resources", "legal"] as const).map(
+          <div className="grid w-full grid-cols-2 items-start justify-between gap-12 lg:col-span-3">
+            {(["platform", "company", "resources", "legal"] as const).map(
               (section) => (
                 <div key={section} className="w-full">
-                  <h3 className="border-primary mb-4 -ml-5 border-l-2 pl-5 text-sm font-semibold tracking-wider uppercase">
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  <h3 className="mb-6 text-sm font-black italic tracking-widest uppercase text-foreground border-l-4 border-primary pl-4">
+                    {section}
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-4">
                     {data().navigation[section].map((item) => (
                       <li key={item.name}>
                         <Link
                           href={item.href}
-                          className="group text-muted-foreground hover:text-foreground decoration-primary -ml-5 inline-flex items-center gap-2 underline-offset-8 transition-all duration-500 hover:pl-5 hover:underline"
+                          className="group text-muted-foreground hover:text-primary font-bold text-sm flex items-center gap-2 transition-all duration-300"
                         >
-                          <ArrowDownLeft className="text-primary rotate-[225deg] opacity-30 transition-all duration-500 group-hover:scale-150 group-hover:opacity-100 sm:group-hover:rotate-[225deg] md:rotate-0" />
+                          <ArrowDownLeft className="h-3 w-3 rotate-[225deg] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                           {item.name}
                         </Link>
                       </li>
@@ -174,53 +160,23 @@ export default function FooterSection() {
         </div>
 
         {/* Bottom Section */}
-        <div className="animate-rotate-3d via-primary h-px w-full bg-gradient-to-r from-transparent to-transparent" />
-        <div className="text-muted-foreground container m-auto flex flex-col items-center justify-between gap-4 p-4 text-xs md:flex-row md:px-0 md:text-sm">
-          <p className="">
-            &copy; {currentYear} Vibe Coding Platform. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
+        <div className="mt-16 pt-8 border-t border-border/40 flex flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="flex items-center gap-6">
+              <span className="text-[10px] font-black italic tracking-tighter text-foreground uppercase text-3xl opacity-20">Slope</span>
+              <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">
+                &copy; {currentYear} Slope Academy. All rights reserved.
+              </p>
+          </div>
+          <div className="flex items-center gap-8">
             {data().bottomLinks.map(({ href, label }) => (
-              <Link key={href} href={href} className="hover:text-foreground">
+              <Link key={href} href={href} className="text-muted-foreground hover:text-foreground text-xs font-bold uppercase tracking-widest transition-colors">
                 {label}
               </Link>
             ))}
           </div>
         </div>
-        <span className="from-primary/20 absolute inset-x-0 bottom-0 left-0 -z-10 h-1/3 w-full bg-gradient-to-t" />
+        <span className="absolute inset-x-0 bottom-0 left-0 -z-10 h-32 w-full bg-gradient-to-t from-primary/5 to-transparent opacity-50" />
       </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        /* ===== Animation Presets ===== */
-        .animate-rotate-3d {
-          animation: rotate3d 8s linear infinite;
-        }
-
-        .animate-energy-flow {
-          animation: energy-flow 4s linear infinite;
-          background-size: 200% 100%;
-        }
-
-        /* ===== Keyframes ===== */
-        @keyframes rotate3d {
-          0% {
-            transform: rotateY(0);
-          }
-          100% {
-            transform: rotateY(360deg);
-          }
-        }
-
-        @keyframes energy-flow {
-          0% {
-            background-position: -100% 0;
-          }
-          100% {
-            background-position: 100% 0;
-          }
-        }
-      `}</style>
     </footer>
   );
 }

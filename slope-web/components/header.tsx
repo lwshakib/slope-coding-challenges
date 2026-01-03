@@ -8,10 +8,10 @@ import { cn } from '@/lib/utils'
 import { authClient } from '@/lib/auth-client'
 
 const menuItems = [
-    { name: 'Features', href: '#link' },
-    { name: 'Solution', href: '#link' },
-    { name: 'Pricing', href: '#link' },
-    { name: 'About', href: '#link' },
+    { name: 'Features', href: '#features' },
+    { name: 'Solutions', href: '#solutions' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'About', href: '#about' },
 ]
 
 export const HeroHeader = () => {
@@ -26,6 +26,19 @@ export const HeroHeader = () => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        if (href.startsWith('#')) {
+            e.preventDefault()
+            const element = document.getElementById(href.substring(1))
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth'
+                })
+                setMenuState(false)
+            }
+        }
+    }
     return (
         <header>
             <nav
@@ -56,6 +69,7 @@ export const HeroHeader = () => {
                                     <li key={index}>
                                         <Link
                                             href={item.href}
+                                            onClick={(e) => handleNavClick(e, item.href)}
                                             className="text-muted-foreground hover:text-accent-foreground block duration-150">
                                             <span>{item.name}</span>
                                         </Link>
@@ -71,6 +85,7 @@ export const HeroHeader = () => {
                                         <li key={index}>
                                             <Link
                                                 href={item.href}
+                                                onClick={(e) => handleNavClick(e, item.href)}
                                                 className="text-muted-foreground hover:text-accent-foreground block duration-150">
                                                 <span>{item.name}</span>
                                             </Link>

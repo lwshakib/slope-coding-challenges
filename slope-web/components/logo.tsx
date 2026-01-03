@@ -112,6 +112,7 @@ export const Logo = ({
     <div className={`flex items-center gap-3 ${className}`} style={style}>
       <LogoIcon size={iconSize} fill={iconFill} />
       <span
+        className="text-foreground"
         style={{
           fontSize: textSize,
           fontWeight: 900,
