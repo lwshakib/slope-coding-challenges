@@ -86,9 +86,12 @@ ${code}
     return fn(...${JSON.stringify(argValues)});
 })()`;
 
-        const startTime = Date.now();
+        const startMemory = process.memoryUsage().heapUsed;
+        const startTime = performance.now();
         const vmResult = vm.runInContext(wrapperScript, context, { timeout: 1000 });
-        const runtime = Date.now() - startTime;
+        const runtime = performance.now() - startTime;
+        const endMemory = process.memoryUsage().heapUsed;
+        const memory = Math.max(0, (endMemory - startMemory) / 1024); // KB
         
         const expectedParsed = JSON.parse(testCase.expectedOutput);
         const isMatch = JSON.stringify(vmResult) === JSON.stringify(expectedParsed);
@@ -101,7 +104,8 @@ ${code}
                 input: testCase.input,
                 expected: testCase.expectedOutput,
                 actual: JSON.stringify(vmResult),
-                runtime
+                runtime,
+                memory
             };
         } else {
             result = {
@@ -111,7 +115,8 @@ ${code}
                 input: testCase.input,
                 expected: testCase.expectedOutput,
                 actual: JSON.stringify(vmResult),
-                runtime
+                runtime,
+                memory
             };
         }
     } catch (error: any) {
@@ -142,7 +147,7 @@ async function startWorker() {
             if (msg !== null) {
                 try {
                     const data = JSON.parse(msg.content.toString());
-                    const { submissionId, code, testCase, caseIdx, totalCases, functionName } = data;
+                    const { submissionId, code, testCase, caseIdx, totalCases, functionName, isTest } = data;
                     
                     if (!testCase) {
                         console.error(`Invalid message received: missing testCase. Submission: ${submissionId}`);
@@ -150,12 +155,13 @@ async function startWorker() {
                         return;
                     }
 
-                    console.log(`Processing submission ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
+                    console.log(`Processing ${isTest ? 'test run' : 'submission'} ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
 
                     const result = await runCode(code, testCase, caseIdx, totalCases, functionName);
 
                     channel.sendToQueue(RESULT_QUEUE, Buffer.from(JSON.stringify({
                         submissionId,
+                        isTest,
                         ...result
                     })), { persistent: true });
 

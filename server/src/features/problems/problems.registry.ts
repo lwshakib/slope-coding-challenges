@@ -28,11 +28,18 @@ const loadProblems = (): Problem[] => {
           starterCode = JSON.parse(fs.readFileSync(starterCodePath, "utf8"));
         }
 
+        let editorial = undefined;
+        const editorialPath = path.join(folderPath, "editorial.json");
+        if (fs.existsSync(editorialPath)) {
+          editorial = JSON.parse(fs.readFileSync(editorialPath, "utf8"));
+        }
+
         problems.push({
           ...metadata,
           description,
           testCases,
-          starterCode
+          starterCode,
+          editorial
         });
       } catch (error) {
         console.error(`Failed to load problem from ${folder}:`, error);

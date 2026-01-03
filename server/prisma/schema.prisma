@@ -24,11 +24,48 @@ model User {
   sessions      Session[]
   accounts      Account[]
   submissions   Submission[]
+  testRuns      TestRun[]
   registrations ContestRegistration[]
+  communitySolutions CommunitySolution[]
+  comments      Comment[]
   points        Int       @default(0)
 
   @@unique([email])
   @@map("user")
+}
+
+model CommunitySolution {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problemSlug String
+  title       String
+  content     String
+  language    String
+  code        String
+  likes       Int       @default(0)
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([problemSlug])
+  @@map("community_solution")
+}
+
+model Comment {
+  id                  String             @id @default(cuid())
+  userId              String
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  communitySolutionId String
+  communitySolution   CommunitySolution  @relation(fields: [communitySolutionId], references: [id], onDelete: Cascade)
+  content             String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([communitySolutionId])
+  @@map("comment")
 }
 
 model Session {
@@ -88,6 +125,9 @@ model Submission {
   language    String
   status      String   @default("PENDING") // PENDING, ACCEPTED, FAILED
   output      String?
+  notes       String?
+  runtime     Float?   // Total/Max runtime in ms
+  memory      Float?   // Max memory used in KB
   createdAt   DateTime @default(now())
   testResults TestCaseResult[]
 
@@ -106,11 +146,49 @@ model TestCaseResult {
   expected     String
   actual       String?
   error        String?
-  runtime      Int?       // ms
+  runtime      Float?     // ms
+  memory       Float?     // KB
   createdAt    DateTime   @default(now())
 
   @@index([submissionId])
   @@map("test_case_result")
+}
+
+model TestRun {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problemSlug String
+  code        String
+  language    String
+  status      String   @default("PENDING") // PENDING, ACCEPTED, FAILED
+  output      String?
+  runtime     Float?   // Total/Max runtime in ms
+  memory      Float?   // Max memory used in KB
+  createdAt   DateTime @default(now())
+  testResults TestRunResult[]
+
+  @@index([userId])
+  @@index([problemSlug])
+  @@map("test_run")
+}
+
+model TestRunResult {
+  id           String   @id @default(cuid())
+  testRunId    String
+  testRun      TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  caseIdx      Int
+  status       String   // PASSED, FAILED, RUNTIME_ERROR, etc.
+  input        String
+  expected     String
+  actual       String?
+  error        String?
+  runtime      Float?   // ms
+  memory       Float?   // KB
+  createdAt    DateTime @default(now())
+
+  @@index([testRunId])
+  @@map("test_run_result")
 }
 
 model Contest {

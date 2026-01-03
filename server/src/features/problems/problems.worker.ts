@@ -12,64 +12,141 @@ export const startResultConsumer = async () => {
         if (msg !== null) {
             try {
                 const data = JSON.parse(msg.content.toString());
-                const { submissionId, status, caseIdx, totalCases, ...resultDetails } = data;
+                const { submissionId, status, caseIdx, totalCases, isTest, ...resultDetails } = data;
 
                 await prisma.$transaction(async (tx) => {
-                    // Lock the submission row to prevent race conditions during aggregation
-                    // We update the status to its current value to trigger a row lock without changing data
-                    await tx.submission.update({
-                        where: { id: submissionId },
-                        data: { status: "PENDING" }
-                    });
+                    let testRun = null;
+                    let submission = null;
 
-                    // 1. Create the test case result
-                    await tx.testCaseResult.create({
-                        data: {
-                            submissionId,
-                            caseIdx,
-                            status,
-                            input: resultDetails.input || "",
-                            expected: resultDetails.expected || "",
-                            actual: resultDetails.actual?.toString(),
-                            error: resultDetails.error,
-                            runtime: resultDetails.runtime
+                    // 1. Find the record (try both TestRun and Submission if needed)
+                    if (isTest) {
+                        testRun = await (tx as any).testRun.findUnique({ where: { id: submissionId } });
+                        if (!testRun) {
+                            submission = await tx.submission.findUnique({ where: { id: submissionId } });
                         }
-                    });
-
-                    // 2. Count existing results for this submission
-                    const resultsCount = await tx.testCaseResult.count({
-                        where: { submissionId }
-                    });
-
-                    // 3. If all cases are in, update the submission
-                    if (resultsCount === totalCases) {
-                        const allResults = await tx.testCaseResult.findMany({
-                            where: { submissionId },
-                            orderBy: { caseIdx: 'asc' }
-                        });
-
-                        const anyFailed = allResults.some((r: any) => r.status !== "PASSED");
-                        
-                        await tx.submission.update({
-                            where: { id: submissionId },
-                            data: {
-                                status: anyFailed ? "FAILED" : "ACCEPTED",
-                                output: JSON.stringify(allResults.map((r: any) => ({
-                                    caseIdx: r.caseIdx,
-                                    status: r.status,
-                                    input: r.input,
-                                    expected: r.expected,
-                                    actual: r.actual,
-                                    error: r.error,
-                                    runtime: r.runtime
-                                })))
-                            }
-                        });
-                        
-                        logger.info(`Completed submission ${submissionId}. Status: ${anyFailed ? "FAILED" : "ACCEPTED"}`);
+                    } else {
+                        submission = await tx.submission.findUnique({ where: { id: submissionId } });
+                        if (!submission) {
+                            testRun = await (tx as any).testRun.findUnique({ where: { id: submissionId } });
+                        }
                     }
 
-                    logger.info(`Processed test case ${caseIdx + 1}/${totalCases} for submission ${submissionId}. Status: ${status}`);
+                    // Determine the actual type based on what we found
+                    const effectiveIsTest = !!testRun;
+                    const recordId = submissionId;
+
+                    if (!testRun && !submission) {
+                        logger.warn(`Processing result for ${isTest ? 'test run' : 'submission'} ${submissionId} but record not found in DB. Skipping.`);
+                        return;
+                    }
+
+                    // Update status to PENDING if not already
+                    if (effectiveIsTest) {
+                        await (tx as any).testRun.update({
+                            where: { id: recordId },
+                            data: { status: "PENDING" }
+                        });
+                    } else {
+                        await tx.submission.update({
+                            where: { id: recordId },
+                            data: { status: "PENDING" }
+                        });
+                    }
+
+                    // 2. Create the test case result
+                    if (effectiveIsTest) {
+                        await (tx as any).testRunResult.create({
+                            data: {
+                                testRunId: recordId,
+                                caseIdx,
+                                status,
+                                input: resultDetails.input || "",
+                                expected: resultDetails.expected || "",
+                                actual: resultDetails.actual?.toString(),
+                                error: resultDetails.error,
+                                runtime: resultDetails.runtime,
+                                memory: resultDetails.memory
+                            }
+                        });
+                    } else {
+                        await tx.testCaseResult.create({
+                            data: {
+                                submissionId: recordId,
+                                caseIdx,
+                                status,
+                                input: resultDetails.input || "",
+                                expected: resultDetails.expected || "",
+                                actual: resultDetails.actual?.toString(),
+                                error: resultDetails.error,
+                                runtime: resultDetails.runtime,
+                                memory: resultDetails.memory
+                            }
+                        });
+                    }
+
+                    // 3. Count existing results
+                    let resultsCount = 0;
+                    if (effectiveIsTest) {
+                        resultsCount = await (tx as any).testRunResult.count({
+                            where: { testRunId: recordId }
+                        });
+                    } else {
+                        resultsCount = await tx.testCaseResult.count({
+                            where: { submissionId: recordId }
+                        });
+                    }
+
+                    // 4. If all cases are in, update
+                    if (resultsCount === totalCases) {
+                        let allResults: any[] = [];
+                        if (effectiveIsTest) {
+                            allResults = await (tx as any).testRunResult.findMany({
+                                where: { testRunId: recordId },
+                                orderBy: { caseIdx: 'asc' }
+                            });
+                        } else {
+                            allResults = await tx.testCaseResult.findMany({
+                                where: { submissionId: recordId },
+                                orderBy: { caseIdx: 'asc' }
+                            });
+                        }
+
+                        const anyFailed = allResults.some((r: any) => r.status !== "PASSED");
+                        const totalRuntime = allResults.reduce((acc: number, r: any) => acc + (r.runtime || 0), 0);
+                        const maxMemory = Math.max(...allResults.map((r: any) => r.memory || 0));
+                        
+                        const updateData = {
+                            status: anyFailed ? "FAILED" : "ACCEPTED",
+                            runtime: totalRuntime,
+                            memory: maxMemory,
+                            output: JSON.stringify(allResults.map((r: any) => ({
+                                caseIdx: r.caseIdx,
+                                status: r.status,
+                                input: r.input,
+                                expected: r.expected,
+                                actual: r.actual,
+                                error: r.error,
+                                runtime: r.runtime,
+                                memory: r.memory
+                            })))
+                        };
+
+                        if (effectiveIsTest) {
+                            await (tx as any).testRun.update({
+                                where: { id: recordId },
+                                data: updateData
+                            });
+                        } else {
+                            await tx.submission.update({
+                                where: { id: recordId },
+                                data: updateData
+                            });
+                        }
+                        
+                        logger.info(`Completed ${effectiveIsTest ? 'test run' : 'submission'} ${recordId}. Status: ${anyFailed ? "FAILED" : "ACCEPTED"}`);
+                    }
+
+                    logger.info(`Processed test case ${caseIdx + 1}/${totalCases} for ${effectiveIsTest ? 'test run' : 'submission'} ${recordId}. Status: ${status}`);
                 });
 
                 channel.ack(msg);

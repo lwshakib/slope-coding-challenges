@@ -22,6 +22,8 @@ import math
 import heapq
 import bisect
 import re
+import time
+import tracemalloc
 from typing import *
 
 ${code}
@@ -34,6 +36,9 @@ def run_test():
         parts = re.split(r',\\s*(?=[a-zA-Z_][a-zA-Z0-9_]*\\s*=)', input_str)
         for part in parts:
             exec(part.strip(), {}, local_vars)
+        
+        tracemalloc.start()
+        start_time = time.perf_counter()
         
         if 'Solution' in globals() and isinstance(globals()['Solution'], type):
             sol = Solution()
@@ -50,8 +55,19 @@ def run_test():
             result = globals()['${functionName}'](**local_vars)
         else:
             raise Exception(f"No function or class method '${functionName}' found")
+        
+        end_time = time.perf_counter()
+        current, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        
+        runtime_ms = (end_time - start_time) * 1000
+        memory_kb = peak / 1024
                 
-        print(json.dumps(result))
+        print(json.dumps({
+            "result": result,
+            "runtime": runtime_ms,
+            "memory": memory_kb
+        }))
     except Exception as e:
         print(f"ERROR_MSG:{str(e)}", file=sys.stderr)
 
@@ -74,8 +90,7 @@ if __name__ == "__main__":
                 status: "RUNTIME_ERROR",
                 input: testCase.input,
                 expected: testCase.expectedOutput,
-                error: stderr.replace("ERROR_MSG:", "").trim(),
-                runtime
+                error: stderr.replace("ERROR_MSG:", "").trim()
             };
         } else if (stderr) {
             result = {
@@ -84,20 +99,23 @@ if __name__ == "__main__":
                 status: "RUNTIME_ERROR",
                 input: testCase.input,
                 expected: testCase.expectedOutput,
-                error: stderr.trim(),
-                runtime
+                error: stderr.trim()
             };
         } else {
             const stdoutResult = stdout.trim();
-            let parsedResult;
+            let parsed;
             try {
-                parsedResult = JSON.parse(stdoutResult);
+                parsed = JSON.parse(stdoutResult);
             } catch (e) {
-                parsedResult = stdoutResult;
+                parsed = { result: stdoutResult, runtime: 0, memory: 0 };
             }
 
+            const actualResult = parsed.result;
+            const runtime = parsed.runtime || 0;
+            const memory = parsed.memory || 0;
+
             const expectedParsed = JSON.parse(testCase.expectedOutput);
-            const isMatch = JSON.stringify(parsedResult) === JSON.stringify(expectedParsed);
+            const isMatch = JSON.stringify(actualResult) === JSON.stringify(expectedParsed);
 
             if (!isMatch) {
                 result = {
@@ -106,8 +124,9 @@ if __name__ == "__main__":
                     status: "FAILED",
                     input: testCase.input,
                     expected: testCase.expectedOutput,
-                    actual: stdoutResult,
-                    runtime
+                    actual: JSON.stringify(actualResult),
+                    runtime,
+                    memory
                 };
             } else {
                 result = {
@@ -116,8 +135,9 @@ if __name__ == "__main__":
                     status: "PASSED",
                     input: testCase.input,
                     expected: testCase.expectedOutput,
-                    actual: stdoutResult,
-                    runtime
+                    actual: JSON.stringify(actualResult),
+                    runtime,
+                    memory
                 };
             }
         }
@@ -162,7 +182,7 @@ async function startWorker() {
             if (msg !== null) {
                 try {
                     const data = JSON.parse(msg.content.toString());
-                    const { submissionId, code, testCase, caseIdx, totalCases, functionName } = data;
+                    const { submissionId, code, testCase, caseIdx, totalCases, functionName, isTest } = data;
                     
                     if (!testCase) {
                         console.error(`Invalid message received: missing testCase. Submission: ${submissionId}`);
@@ -170,12 +190,13 @@ async function startWorker() {
                         return;
                     }
 
-                    console.log(`Processing submission ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
+                    console.log(`Processing ${isTest ? 'test run' : 'submission'} ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
 
                     const result = await runCode(code, testCase, caseIdx, totalCases, functionName);
 
                     channel.sendToQueue(RESULT_QUEUE, Buffer.from(JSON.stringify({
                         submissionId,
+                        isTest,
                         ...result
                     })), { persistent: true });
 

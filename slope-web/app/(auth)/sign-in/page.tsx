@@ -39,7 +39,7 @@ export default function SignInPage() {
         },
         onSuccess: () => {
           toast.success("Signed in successfully");
-          router.push("/");
+          router.push("/problemset");
           setLoading(false);
         },
         onError: (ctx) => {
@@ -53,7 +53,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: process.env.NEXT_PUBLIC_BASE_URL,
+      callbackURL: process.env.NEXT_PUBLIC_BASE_URL + "/problemset",
     });
   };
 

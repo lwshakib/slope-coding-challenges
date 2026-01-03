@@ -103,6 +103,8 @@ async function runCode(code: string, testCase: any, caseIdx: number, totalCases:
 #include <queue>
 #include <stack>
 #include <type_traits>
+#include <chrono>
+#include <sys/resource.h>
 
 using namespace std;
 
@@ -135,7 +137,20 @@ int main() {
     try {
         Solution sol;
 ${inputDecls}
+        auto start = std::chrono::high_resolution_clock::now();
         auto res = sol.${functionName}(${callArgs});
+        auto end = std::chrono::high_resolution_clock::now();
+        
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+        
+        cout << "---METRICS_START---" << endl;
+        cout << elapsed.count() << endl;
+        cout << usage.ru_maxrss << endl;
+        cout << "---METRICS_END---" << endl;
+        
         printResult(res);
     } catch (...) {
         return 1;
@@ -175,13 +190,24 @@ ${inputDecls}
                     status: "RUNTIME_ERROR",
                     input: testCase?.input || "",
                     expected: testCase?.expectedOutput || "",
-                    error: stderr?.toString(),
-                    runtime
+                    error: stderr?.toString()
                 };
             } else {
-                const stdoutResult = stdout.trim();
+                const stdoutContent = stdout.toString();
+                const metricsMatch = stdoutContent.match(/---METRICS_START---\n([\d.]+)\n(\d+)\n---METRICS_END---/);
+                
+                let runtime = 0;
+                let memory = 0;
+                let cleanStdout = stdoutContent;
+
+                if (metricsMatch) {
+                    runtime = parseFloat(metricsMatch[1]!);
+                    memory = parseFloat(metricsMatch[2]!);
+                    cleanStdout = stdoutContent.replace(/---METRICS_START---[\s\S]*?---METRICS_END---\n/, "").trim();
+                }
+
                 const expected = testCase.expectedOutput.replace(/\s/g, "");
-                const actual = stdoutResult.replace(/\s/g, "");
+                const actual = cleanStdout.replace(/\s/g, "");
                 
                 if (actual !== expected) {
                     result = {
@@ -190,8 +216,9 @@ ${inputDecls}
                         status: "FAILED",
                         input: testCase?.input || "",
                         expected: testCase?.expectedOutput || "",
-                        actual: stdoutResult,
-                        runtime
+                        actual: cleanStdout,
+                        runtime,
+                        memory
                     };
                 } else {
                     result = {
@@ -200,8 +227,9 @@ ${inputDecls}
                         status: "PASSED",
                         input: testCase?.input || "",
                         expected: testCase?.expectedOutput || "",
-                        actual: stdoutResult,
-                        runtime
+                        actual: cleanStdout,
+                        runtime,
+                        memory
                     };
                 }
             }
@@ -257,7 +285,7 @@ async function startWorker() {
             if (msg !== null) {
                 try {
                     const data = JSON.parse(msg.content.toString());
-                    const { submissionId, code, testCase, caseIdx, totalCases, slug, functionName } = data;
+                    const { submissionId, code, testCase, caseIdx, totalCases, slug, functionName, isTest } = data;
                     
                     if (!testCase) {
                         console.error(`Invalid message received: missing testCase. Submission: ${submissionId}`);
@@ -265,12 +293,13 @@ async function startWorker() {
                         return;
                     }
 
-                    console.log(`Processing submission ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
+                    console.log(`Processing ${isTest ? 'test run' : 'submission'} ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
 
                     const result = await runCode(code, testCase, caseIdx, totalCases, slug, functionName);
 
                     channel.sendToQueue(RESULT_QUEUE, Buffer.from(JSON.stringify({
                         submissionId,
+                        isTest,
                         ...result
                     })), { persistent: true });
 

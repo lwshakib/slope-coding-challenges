@@ -1,7 +1,8 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
 import { AppHeader } from "@/components/app-header";
@@ -9,6 +10,9 @@ import { AppHeader } from "@/components/app-header";
 export default function MainLayout({children}: {children: React.ReactNode}) {
     const { data: session, isPending } = authClient.useSession();
     const router = useRouter();
+
+    const pathname = usePathname();
+    const isProblemPage = pathname?.startsWith("/problems/");
 
     useEffect(() => {
         if (!isPending && !session) {
@@ -27,9 +31,12 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
     if (!session) return null;
 
     return (
-        <div className="min-h-screen w-full bg-zinc-50 dark:bg-black/95">
-            <AppHeader />
-            <main className="py-12">
+        <div className="min-h-screen w-full bg-zinc-50 dark:bg-black/95 flex flex-col">
+            {!isProblemPage && <AppHeader />}
+            <main className={cn(
+                "flex-1",
+                !isProblemPage && "py-12"
+            )}>
                 {children}
             </main>
         </div>

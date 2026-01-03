@@ -20,4 +20,8 @@ export interface Problem {
   starterCode?: Record<string, string>;
   timeComplexity?: string;
   spaceComplexity?: string;
+  editorial?: {
+    approach: string;
+    solutionCode: Record<string, string>;
+  };
 }

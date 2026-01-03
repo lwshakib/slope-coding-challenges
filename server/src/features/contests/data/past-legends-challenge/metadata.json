@@ -1,0 +1,10 @@
+{
+  "id": "past-legends",
+  "slug": "past-legends-challenge",
+  "title": "Past Legends Challenge",
+  "description": "A commemorative challenge from the start of the year 2026. Test your skills on classic problems.",
+  "startTime": "2026-01-01T00:00:00Z",
+  "endTime": "2026-01-10T23:59:59Z",
+  "prizes": "Legacy Badge",
+  "problemSlugs": ["two-sum", "add-two-numbers", "valid-parentheses"]
+}
