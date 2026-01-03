@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {string} s\n * @param {string} t\n * @return {boolean}\n */\nvar isAnagram = function(s, t) {\n    \n};",
+  "python": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        ",
+  "cpp": "class Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        \n    }\n};"
+}

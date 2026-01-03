@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {string} s\n * @param {string} t\n * @return {string}\n */\nvar minWindow = function(s, t) {\n    \n};",
+  "python": "class Solution:\n    def minWindow(self, s: str, t: str) -> str:\n        ",
+  "cpp": "class Solution {\npublic:\n    string minWindow(string s, string t) {\n        \n    }\n};"
+}

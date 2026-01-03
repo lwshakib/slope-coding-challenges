@@ -16,7 +16,10 @@ import {
     User as UserIcon,
     ChevronRight,
     CheckCircle2,
-    XCircle
+    XCircle,
+    Sunrise,
+    Brain,
+    Zap
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from 'next/link'
@@ -198,17 +201,17 @@ export default function ProfilePage() {
                         
                         <div className="grid grid-cols-2 gap-4">
                             {[
-                                { name: 'Early Bird', icon: '🌅', unlocked: true },
-                                { name: 'Problem Solver', icon: '🧠', unlocked: true },
-                                { name: 'Ace', icon: '♠️', unlocked: false },
-                                { name: 'Speedster', icon: '⚡', unlocked: false },
+                                { name: 'Early Bird', icon: Sunrise, unlocked: true, color: 'text-orange-500' },
+                                { name: 'Problem Solver', icon: Brain, unlocked: true, color: 'text-purple-500' },
+                                { name: 'Ace', icon: Trophy, unlocked: false, color: 'text-yellow-500' },
+                                { name: 'Speedster', icon: Zap, unlocked: false, color: 'text-blue-500' },
                             ].map((badge) => (
                                 <Card key={badge.name} className={cn(
                                     "border-border/40 bg-card/20 transition-all",
                                     !badge.unlocked && "opacity-40 grayscale"
                                 )}>
                                     <CardContent className="p-4 flex flex-col items-center justify-center gap-2 text-center">
-                                        <span className="text-3xl">{badge.icon}</span>
+                                        <badge.icon className={cn("size-8", badge.unlocked && badge.color)} />
                                         <span className="text-[10px] font-bold uppercase tracking-tight">{badge.name}</span>
                                     </CardContent>
                                 </Card>

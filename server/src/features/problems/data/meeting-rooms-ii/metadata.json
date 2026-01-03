@@ -1,0 +1,18 @@
+{
+  "id": "148",
+  "slug": "meeting-rooms-ii",
+  "title": "Meeting Rooms II",
+  "difficulty": "Medium",
+  "category": "Interval",
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Greedy",
+    "Sorting",
+    "Heap"
+  ],
+  "acceptance": "50.8%",
+  "functionName": "minMeetingRooms",
+  "timeComplexity": "O(n log n)",
+  "spaceComplexity": "O(n)"
+}

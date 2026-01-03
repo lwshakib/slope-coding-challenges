@@ -1,0 +1,15 @@
+{
+  "id": "110",
+  "slug": "best-time-to-buy-and-sell-stock",
+  "title": "Best Time to Buy and Sell Stock",
+  "difficulty": "Easy",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Dynamic Programming"
+  ],
+  "acceptance": "54.4%",
+  "functionName": "maxProfit",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

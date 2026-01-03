@@ -1,0 +1,15 @@
+{
+  "id": "113",
+  "slug": "search-in-rotated-sorted-array",
+  "title": "Search in Rotated Sorted Array",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Binary Search"
+  ],
+  "acceptance": "39.6%",
+  "functionName": "search",
+  "timeComplexity": "O(log n)",
+  "spaceComplexity": "O(1)"
+}

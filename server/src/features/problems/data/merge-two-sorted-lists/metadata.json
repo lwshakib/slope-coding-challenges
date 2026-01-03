@@ -1,0 +1,15 @@
+{
+  "id": "116",
+  "slug": "merge-two-sorted-lists",
+  "title": "Merge Two Sorted Lists",
+  "difficulty": "Easy",
+  "category": "Linked List",
+  "tags": [
+    "Linked List",
+    "Recursion"
+  ],
+  "acceptance": "63.2%",
+  "functionName": "mergeTwoLists",
+  "timeComplexity": "O(n + m)",
+  "spaceComplexity": "O(1)"
+}

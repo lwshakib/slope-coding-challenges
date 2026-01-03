@@ -1,0 +1,17 @@
+[
+  {
+    "input": "strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]",
+    "expectedOutput": "[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]",
+    "isPublic": true
+  },
+  {
+    "input": "strs = [\"\"]",
+    "expectedOutput": "[[\"\"]]",
+    "isPublic": true
+  },
+  {
+    "input": "strs = [\"a\"]",
+    "expectedOutput": "[[\"a\"]]",
+    "isPublic": true
+  }
+]

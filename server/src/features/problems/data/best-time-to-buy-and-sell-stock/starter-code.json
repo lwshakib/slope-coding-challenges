@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} prices\n * @return {number}\n */\nvar maxProfit = function(prices) {\n    \n};",
+  "python": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        ",
+  "cpp": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        \n    }\n};"
+}

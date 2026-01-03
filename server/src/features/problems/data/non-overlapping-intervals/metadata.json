@@ -1,0 +1,17 @@
+{
+  "id": "147",
+  "slug": "non-overlapping-intervals",
+  "title": "Non-overlapping Intervals",
+  "difficulty": "Medium",
+  "category": "Interval",
+  "tags": [
+    "Array",
+    "Dynamic Programming",
+    "Greedy",
+    "Sorting"
+  ],
+  "acceptance": "52.4%",
+  "functionName": "eraseOverlapIntervals",
+  "timeComplexity": "O(n log n)",
+  "spaceComplexity": "O(n)"
+}

@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar rob = function(nums) {\n    \n};",
+  "python": "class Solution:\n    def rob(self, nums: List[int]) -> int:\n        ",
+  "cpp": "class Solution {\npublic:\n    int rob(vector<int>& nums) {\n        \n    }\n};"
+}

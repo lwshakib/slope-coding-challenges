@@ -1,0 +1,15 @@
+{
+  "id": "115",
+  "slug": "reverse-linked-list",
+  "title": "Reverse Linked List",
+  "difficulty": "Easy",
+  "category": "Linked List",
+  "tags": [
+    "Linked List",
+    "Recursion"
+  ],
+  "acceptance": "73.9%",
+  "functionName": "reverseList",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

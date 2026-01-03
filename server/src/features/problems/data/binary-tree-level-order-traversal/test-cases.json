@@ -1,0 +1,17 @@
+[
+  {
+    "input": "root = [3,9,20,null,null,15,7]",
+    "expectedOutput": "[[3],[9,20],[15,7]]",
+    "isPublic": true
+  },
+  {
+    "input": "root = [1]",
+    "expectedOutput": "[[1]]",
+    "isPublic": true
+  },
+  {
+    "input": "root = []",
+    "expectedOutput": "[]",
+    "isPublic": true
+  }
+]

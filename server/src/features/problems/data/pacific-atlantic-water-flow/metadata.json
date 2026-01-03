@@ -1,0 +1,17 @@
+{
+  "id": "142",
+  "slug": "pacific-atlantic-water-flow",
+  "title": "Pacific Atlantic Water Flow",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Array",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Matrix"
+  ],
+  "acceptance": "53.8%",
+  "functionName": "pacificAtlantic",
+  "timeComplexity": "O(m * n)",
+  "spaceComplexity": "O(m * n)"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "127",
+  "slug": "kth-smallest-element-in-a-bst",
+  "title": "Kth Smallest Element in a BST",
+  "difficulty": "Medium",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Binary Search Tree",
+    "Binary Tree"
+  ],
+  "acceptance": "69.6%",
+  "functionName": "kthSmallest",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

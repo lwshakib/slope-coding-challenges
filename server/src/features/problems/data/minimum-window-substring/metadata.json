@@ -1,0 +1,16 @@
+{
+  "id": "112",
+  "slug": "minimum-window-substring",
+  "title": "Minimum Window Substring",
+  "difficulty": "Hard",
+  "category": "String",
+  "tags": [
+    "String",
+    "Sliding Window",
+    "Hash Table"
+  ],
+  "acceptance": "40.8%",
+  "functionName": "minWindow",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

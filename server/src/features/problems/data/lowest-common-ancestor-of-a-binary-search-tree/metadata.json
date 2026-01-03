@@ -1,0 +1,17 @@
+{
+  "id": "124",
+  "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+  "title": "Lowest Common Ancestor of a Binary Search Tree",
+  "difficulty": "Medium",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Binary Search Tree",
+    "Binary Tree"
+  ],
+  "acceptance": "61.3%",
+  "functionName": "lowestCommonAncestor",
+  "timeComplexity": "O(log n)",
+  "spaceComplexity": "O(1)"
+}

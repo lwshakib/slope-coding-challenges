@@ -1,0 +1,16 @@
+{
+  "id": "108",
+  "slug": "3sum",
+  "title": "3Sum",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Sorting"
+  ],
+  "acceptance": "32.8%",
+  "functionName": "threeSum",
+  "timeComplexity": "O(n^2)",
+  "spaceComplexity": "O(1)"
+}

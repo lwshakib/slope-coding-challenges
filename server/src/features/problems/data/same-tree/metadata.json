@@ -1,0 +1,17 @@
+{
+  "id": "122",
+  "slug": "same-tree",
+  "title": "Same Tree",
+  "difficulty": "Easy",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Binary Tree"
+  ],
+  "acceptance": "59.9%",
+  "functionName": "isSameTree",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

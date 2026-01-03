@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[][]} intervals\n * @return {number}\n */\nvar minMeetingRooms = function(intervals) {\n    \n};",
+  "python": "class Solution:\n    def minMeetingRooms(self, intervals: List[List[int]]) -> int:\n        ",
+  "cpp": "class Solution {\npublic:\n    int minMeetingRooms(vector<vector<int>>& intervals) {\n        \n    }\n};"
+}

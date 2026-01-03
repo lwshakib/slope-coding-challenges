@@ -1,0 +1,18 @@
+{
+  "id": "123",
+  "slug": "subtree-of-another-tree",
+  "title": "Subtree of Another Tree",
+  "difficulty": "Easy",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "String Matching",
+    "Binary Tree",
+    "Hash Function"
+  ],
+  "acceptance": "46.2%",
+  "functionName": "isSubtree",
+  "timeComplexity": "O(n * m)",
+  "spaceComplexity": "O(n + m)"
+}

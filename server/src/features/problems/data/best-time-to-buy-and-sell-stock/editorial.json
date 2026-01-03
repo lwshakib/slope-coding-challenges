@@ -1,0 +1,8 @@
+{
+  "approach": "We can maintain the minimum price seen so far as we iterate through the array. At each step, we calculate the potential profit if we sold at the current price (current price - min price). We update the maximum profit if this potential profit is higher.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {number[]} prices\n * @return {number}\n */\nvar maxProfit = function(prices) {\n    let minPrice = Infinity;\n    let maxP = 0;\n    for (const price of prices) {\n        if (price < minPrice) minPrice = price;\n        else maxP = Math.max(maxP, price - minPrice);\n    }\n    return maxP;\n};",
+    "python": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        l, r = 0, 1\n        maxP = 0\n        while r < len(prices):\n            if prices[l] < prices[r]:\n                profit = prices[r] - prices[l]\n                maxP = max(maxP, profit)\n            else:\n                l = r\n            r += 1\n        return maxP",
+    "cpp": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int l = 0, r = 1;\n        int maxP = 0;\n        while (r < prices.size()) {\n            if (prices[l] < prices[r]) {\n                int profit = prices[r] - prices[l];\n                maxP = max(maxP, profit);\n            } else {\n                l = r;\n            }\n            r++;\n        }\n        return maxP;\n    }\n};"
+  }
+}

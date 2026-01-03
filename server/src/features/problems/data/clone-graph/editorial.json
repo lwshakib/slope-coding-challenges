@@ -1,0 +1,8 @@
+{
+  "approach": "We use a HashMap to map original nodes to their clones to avoid cycles and infinite loops. We can traverse using DFS/BFS. For each node, if it's already in map, return the clone. Else, create new node, put in map, then recursively clone neighbors.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {Node} node\n * @return {Node}\n */\nvar cloneGraph = function(node) {\n    const map = new Map();\n    function dfs(n) {\n        if (!n) return null;\n        if (map.has(n)) return map.get(n);\n        const clone = new Node(n.val);\n        map.set(n, clone);\n        for (const nei of n.neighbors) {\n            clone.neighbors.push(dfs(nei));\n        }\n        return clone;\n    }\n    return dfs(node);\n};",
+    "python": "class Solution:\n    def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:\n        oldToNew = {}\n        def dfs(node):\n            if not node:\n                return None\n            if node in oldToNew:\n                return oldToNew[node]\n            copy = Node(node.val)\n            oldToNew[node] = copy\n            for nei in node.neighbors:\n                copy.neighbors.append(dfs(nei))\n            return copy\n        return dfs(node)",
+    "cpp": "class Solution {\npublic:\n    unordered_map<Node*, Node*> map;\n    Node* cloneGraph(Node* node) {\n        if (!node) return nullptr;\n        if (map.find(node) != map.end()) return map[node];\n        Node* clone = new Node(node->val);\n        map[node] = clone;\n        for (Node* nei : node->neighbors) {\n            clone->neighbors.push_back(cloneGraph(nei));\n        }\n        return clone;\n    }\n};"
+  }
+}

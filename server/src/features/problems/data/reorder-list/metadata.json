@@ -1,0 +1,17 @@
+{
+  "id": "117",
+  "slug": "reorder-list",
+  "title": "Reorder List",
+  "difficulty": "Medium",
+  "category": "Linked List",
+  "tags": [
+    "Linked List",
+    "Two Pointers",
+    "Stack",
+    "Recursion"
+  ],
+  "acceptance": "54.8%",
+  "functionName": "reorderList",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

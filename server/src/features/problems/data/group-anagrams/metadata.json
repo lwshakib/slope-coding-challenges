@@ -1,0 +1,16 @@
+{
+  "id": "103",
+  "slug": "group-anagrams",
+  "title": "Group Anagrams",
+  "difficulty": "Medium",
+  "category": "String",
+  "tags": [
+    "String",
+    "Hash Table",
+    "Sorting"
+  ],
+  "acceptance": "66.8%",
+  "functionName": "groupAnagrams",
+  "timeComplexity": "O(n * k)",
+  "spaceComplexity": "O(n * k)"
+}

@@ -2,6 +2,7 @@ import HeroSection from "@/components/hero-section";
 import Pricing from "@/components/pricing";
 import Footer from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
+import { Zap, Trophy, Check, Library } from "lucide-react";
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                <div className="p-8 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 transition-all space-y-4 group shadow-xl">
                   <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 group-hover:scale-110 transition-transform">
-                     <span className="text-xl font-black italic">3k+</span>
+                     <Library className="size-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground uppercase tracking-tight">Vast Library</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed font-medium">
@@ -29,7 +30,7 @@ export default function Home() {
                </div>
                <div className="p-8 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 transition-all space-y-4 group shadow-xl">
                   <div className="size-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 border border-orange-500/20 group-hover:scale-110 transition-transform">
-                     <span className="text-xl font-black italic">⚡</span>
+                     <Zap className="size-6 fill-current" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground uppercase tracking-tight">Real-time Execution</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed font-medium">
@@ -38,7 +39,7 @@ export default function Home() {
                </div>
                <div className="p-8 rounded-[2rem] bg-card border border-border/40 hover:border-primary/30 transition-all space-y-4 group shadow-xl">
                   <div className="size-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 group-hover:scale-110 transition-transform">
-                     <span className="text-xl font-black italic">🏆</span>
+                     <Trophy className="size-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground uppercase tracking-tight">Global Contests</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed font-medium">
@@ -71,7 +72,9 @@ export default function Home() {
                             'AI-Powered Code Suggestions'
                         ].map((item, i) => (
                             <li key={i} className="flex items-center gap-3 font-bold text-foreground bg-secondary/30 p-4 rounded-2xl border border-border/40">
-                                <div className="size-6 rounded-full bg-primary flex items-center justify-center text-[10px] text-primary-foreground italic shrink-0">✓</div>
+                                <div className="size-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground shrink-0 transition-transform group-hover:scale-110">
+                                    <Check className="size-3.5 stroke-[3]" />
+                                </div>
                                 <span className="text-sm uppercase tracking-tight">{item}</span>
                             </li>
                         ))}

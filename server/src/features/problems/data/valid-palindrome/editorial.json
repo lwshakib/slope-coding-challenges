@@ -1,0 +1,8 @@
+{
+  "approach": "We can use two pointers, one starting at the beginning and one at the end of the string. We move them towards the center, skipping non-alphanumeric characters. At each step, we compare the characters at the pointers (ignoring case). If they don't match, it's not a palindrome.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {string} s\n * @return {boolean}\n */\nvar isPalindrome = function(s) {\n    let l = 0, r = s.length - 1;\n    while (l < r) {\n        while (l < r && !/[a-zA-Z0-9]/.test(s[l])) l++;\n        while (l < r && !/[a-zA-Z0-9]/.test(s[r])) r--;\n        if (s[l].toLowerCase() !== s[r].toLowerCase()) return false;\n        l++; r--;\n    }\n    return true;\n};",
+    "python": "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        l, r = 0, len(s) - 1\n        while l < r:\n            while l < r and not self.alphaNum(s[l]):\n                l += 1\n            while r > l and not self.alphaNum(s[r]):\n                r -= 1\n            if s[l].lower() != s[r].lower():\n                return False\n            l, r = l + 1, r - 1\n        return True\n    \n    def alphaNum(self, c):\n        return (ord('A') <= ord(c) <= ord('Z') or \n                ord('a') <= ord(c) <= ord('z') or \n                ord('0') <= ord(c) <= ord('9'))",
+    "cpp": "class Solution {\npublic:\n    bool isPalindrome(string s) {\n        int l = 0, r = s.length() - 1;\n        while (l < r) {\n            while (l < r && !isalnum(s[l])) l++;\n            while (l < r && !isalnum(s[r])) r--;\n            if (tolower(s[l]) != tolower(s[r])) return false;\n            l++; r--;\n        }\n        return true;\n    }\n};"
+  }
+}

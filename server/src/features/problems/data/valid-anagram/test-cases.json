@@ -1,0 +1,12 @@
+[
+  {
+    "input": "s = \"anagram\", t = \"nagaram\"",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"rat\", t = \"car\"",
+    "expectedOutput": "false",
+    "isPublic": true
+  }
+]

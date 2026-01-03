@@ -1,0 +1,16 @@
+{
+  "id": "141",
+  "slug": "rotting-oranges",
+  "title": "Rotting Oranges",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Array",
+    "Breadth-First Search",
+    "Matrix"
+  ],
+  "acceptance": "51.1%",
+  "functionName": "orangesRotting",
+  "timeComplexity": "O(m * n)",
+  "spaceComplexity": "O(m * n)"
+}

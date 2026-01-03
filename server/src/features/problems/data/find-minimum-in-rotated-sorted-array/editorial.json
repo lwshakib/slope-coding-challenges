@@ -1,0 +1,8 @@
+{
+  "approach": "We use Binary Search. If the array is rotated, at some point the values drop (e.g., from max to min). The sorted property breaks here. We can maintain pointers `l` and `r`. If `nums[mid]` is greater than `nums[r]`, it means the minimum is to the right. Otherwise, it's to the left (or is `mid`).",
+  "solutionCode": {
+    "javascript": "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar findMin = function(nums) {\n    let l = 0, r = nums.length - 1;\n    while (l < r) {\n        const m = Math.floor((l + r) / 2);\n        if (nums[m] > nums[r]) l = m + 1;\n        else r = m;\n    }\n    return nums[l];\n};",
+    "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        l, r = 0, len(nums) - 1\n        while l < r:\n            mid = (l + r) // 2\n            if nums[mid] > nums[r]:\n                l = mid + 1\n            else:\n                r = mid\n        return nums[l]",
+    "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        int l = 0, r = nums.size() - 1;\n        while (l < r) {\n            int m = (l + r) / 2;\n            if (nums[m] > nums[r]) l = m + 1;\n            else r = m;\n        }\n        return nums[l];\n    }\n};"
+  }
+}

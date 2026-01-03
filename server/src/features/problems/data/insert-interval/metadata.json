@@ -1,0 +1,14 @@
+{
+  "id": "144",
+  "slug": "insert-interval",
+  "title": "Insert Interval",
+  "difficulty": "Medium",
+  "category": "Interval",
+  "tags": [
+    "Array"
+  ],
+  "acceptance": "39.3%",
+  "functionName": "insert",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

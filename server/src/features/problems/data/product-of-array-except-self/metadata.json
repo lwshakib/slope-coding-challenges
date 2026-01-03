@@ -1,0 +1,15 @@
+{
+  "id": "105",
+  "slug": "product-of-array-except-self",
+  "title": "Product of Array Except Self",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Prefix Sum"
+  ],
+  "acceptance": "64.8%",
+  "functionName": "productExceptSelf",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}
