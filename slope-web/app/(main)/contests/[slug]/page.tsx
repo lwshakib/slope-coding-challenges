@@ -25,9 +25,10 @@ import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 
 interface ContestDetail extends Contest {
-    problems: { slug: string; title: string }[];
+    problems: { slug: string; title: string, isLocked: boolean; isCompleted: boolean }[];
     isRegistered: boolean;
     registrationCount: number;
+    currentProgressIndex: number;
 }
 
 interface Contest {
@@ -180,42 +181,56 @@ export default function ContestDetailPage() {
                         </div>
 
                         <div className="space-y-3">
-                            {contest.problems.map((prob, idx) => (
-                                <div 
-                                    key={prob.slug}
-                                    className={cn(
-                                        "p-6 rounded-3xl border transition-all duration-300 flex items-center justify-between group",
-                                        canEnter 
-                                            ? "bg-card hover:bg-primary/[0.03] border-border/40 hover:border-primary/30 cursor-pointer" 
-                                            : "bg-muted/10 border-dashed border-border/40 opacity-70 grayscale"
-                                    )}
-                                >
-                                    <div className="flex items-center gap-6">
-                                        <div className="size-12 rounded-2xl bg-muted/40 flex items-center justify-center text-xl font-black italic text-muted-foreground">
-                                            {idx + 1}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
-                                                {canEnter ? prob.slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "Problem " + (idx + 1)}
-                                            </h3>
-                                            <div className="flex gap-2 mt-1">
-                                                <Badge variant="outline" className="text-[10px] uppercase font-bold text-muted-foreground/60 p-0 border-none">
-                                                    100 Points
-                                                </Badge>
+                            {contest.problems.map((prob, idx) => {
+                                const isLocked = prob.isLocked;
+                                return (
+                                    <div 
+                                        key={prob.slug}
+                                        className={cn(
+                                            "p-6 rounded-3xl border transition-all duration-300 flex items-center justify-between group",
+                                            canEnter 
+                                                ? (isLocked ? "bg-muted/10 border-dashed border-border/20 opacity-70 grayscale cursor-not-allowed" : "bg-card hover:bg-primary/[0.03] border-border/40 hover:border-primary/30 cursor-pointer")
+                                                : "bg-muted/10 border-dashed border-border/40 opacity-70 grayscale"
+                                        )}
+                                        onClick={() => {
+                                            if (canEnter && !isLocked) {
+                                                router.push(`/contest/${slug}/${idx}`);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-6">
+                                            <div className={cn(
+                                                "size-12 rounded-2xl flex items-center justify-center text-xl font-black italic",
+                                                prob.isCompleted ? "bg-green-500/10 text-green-500" : "bg-muted/40 text-muted-foreground"
+                                            )}>
+                                                {prob.isCompleted ? <CheckCircle2 className="size-6" /> : (idx + 1)}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                                                    {(canEnter && !isLocked) ? prob.title : "Problem " + (idx + 1)}
+                                                </h3>
+                                                <div className="flex gap-2 mt-1">
+                                                    <Badge variant="outline" className="text-[10px] uppercase font-bold text-muted-foreground/60 p-0 border-none">
+                                                        100 Points
+                                                    </Badge>
+                                                    {canEnter && isLocked && (
+                                                        <Badge variant="outline" className="text-[10px] uppercase font-bold text-red-500/60 p-0 border-none flex items-center gap-1">
+                                                            <Lock className="size-2.5" /> Solve Previous to Unlock
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    {canEnter ? (
-                                        <Link href={`/problems/${prob.slug}`}>
+                                        {(canEnter && !isLocked) ? (
                                             <Button size="icon" variant="ghost" className="rounded-xl group-hover:bg-primary group-hover:text-white">
                                                 <ChevronRight className="size-5" />
                                             </Button>
-                                        </Link>
-                                    ) : (
-                                        <Lock className="size-5 text-muted-foreground/40" />
-                                    )}
-                                </div>
-                            ))}
+                                        ) : (
+                                            <Lock className="size-5 text-muted-foreground/40" />
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
                 </div>
@@ -234,7 +249,11 @@ export default function ContestDetailPage() {
                                         <h3 className="text-lg font-black italic uppercase tracking-tight text-green-500">Access Granted</h3>
                                         <p className="text-xs text-muted-foreground mt-2 font-medium">You are registered. Return here when the clock strikes zero to begin.</p>
                                     </div>
-                                    <Button disabled={!canEnter} className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic tracking-widest uppercase text-sm shadow-xl shadow-primary/20 group">
+                                    <Button 
+                                        disabled={!canEnter} 
+                                        onClick={() => router.push(`/contest/${slug}/${contest.currentProgressIndex}`)}
+                                        className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-black italic tracking-widest uppercase text-sm shadow-xl shadow-primary/20 group"
+                                    >
                                         {isLive ? "Enter Arena" : isEnded ? "View Problems" : "Awaiting Start..."}
                                         <ChevronRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
                                     </Button>

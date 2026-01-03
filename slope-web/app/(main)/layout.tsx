@@ -12,7 +12,7 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
     const router = useRouter();
 
     const pathname = usePathname();
-    const isProblemPage = pathname?.startsWith("/problems/");
+    const isProblemPage = pathname?.startsWith("/problems/") || pathname?.startsWith("/contest/");
 
     useEffect(() => {
         if (!isPending && !session) {

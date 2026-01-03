@@ -53,11 +53,12 @@ export const syncContestsToDB = async () => {
   logger.info("Syncing contests to database...");
   for (const contest of contestRegistry) {
     try {
-      await (prisma as any).contest.upsert({
+      const dbContest = await (prisma as any).contest.upsert({
         where: { id: contest.id },
         update: {
           title: contest.title,
           description: contest.description,
+          slug: contest.slug,
           startTime: new Date(contest.startTime),
           endTime: new Date(contest.endTime),
           prizes: contest.prizes
@@ -66,11 +67,37 @@ export const syncContestsToDB = async () => {
           id: contest.id,
           title: contest.title,
           description: contest.description,
+          slug: contest.slug,
           startTime: new Date(contest.startTime),
           endTime: new Date(contest.endTime),
           prizes: contest.prizes
         }
       });
+
+      // Sync problems for this contest
+      if (contest.problemSlugs) {
+        // Delete problems not in the registry anymore? 
+        // For simplicity, let's just create/update them
+        for (let i = 0; i < contest.problemSlugs.length; i++) {
+          const problemSlug = contest.problemSlugs[i];
+          await (prisma as any).contestProblem.upsert({
+            where: {
+              contestId_problemSlug: {
+                contestId: dbContest.id,
+                problemSlug
+              }
+            },
+            update: {
+              order: i
+            },
+            create: {
+              contestId: dbContest.id,
+              problemSlug,
+              order: i
+            }
+          });
+        }
+      }
     } catch (error) {
       logger.error(`Failed to sync contest ${contest.id}:`, error);
     }

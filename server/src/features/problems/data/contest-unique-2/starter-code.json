@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number} n\n * @return {number}\n */\nvar sumOfSquares = function(n) {\n    \n};",
+  "python": "class Solution:\n    def sumOfSquares(self, n: int) -> int:\n        ",
+  "cpp": "class Solution {\npublic:\n    int sumOfSquares(int n) {\n        \n    }\n};"
+}

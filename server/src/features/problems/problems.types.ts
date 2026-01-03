@@ -20,6 +20,7 @@ export interface Problem {
   starterCode?: Record<string, string>;
   timeComplexity?: string;
   spaceComplexity?: string;
+  isContestOnly?: boolean;
   editorial?: {
     approach: string;
     solutionCode: Record<string, string>;

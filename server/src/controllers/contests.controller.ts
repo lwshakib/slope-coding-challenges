@@ -3,6 +3,7 @@ import { prisma } from "../services/prisma.services";
 import logger from "../logger/winston.logger";
 
 import { contestRegistry } from "../features/contests/contests.registry";
+import { problemRegistry } from "../features/problems/problems.registry";
 
 interface AuthRequest extends Request {
     user?: {
@@ -138,6 +139,7 @@ export const getContestBySlug = async (req: AuthRequest, res: Response) => {
 
         // Check if current user is registered
         let isRegistered = false;
+        let currentProgressIndex = 0;
         if (userId) {
             const reg = await (prisma as any).contestRegistration.findUnique({
                 where: {
@@ -148,15 +150,28 @@ export const getContestBySlug = async (req: AuthRequest, res: Response) => {
                 }
             });
             isRegistered = !!reg;
+
+            if (isRegistered) {
+                const progress = await (prisma as any).contestProgress.findUnique({
+                    where: {
+                        contestId_userId: {
+                            contestId: contest.id,
+                            userId
+                        }
+                    }
+                });
+                currentProgressIndex = progress?.currentOrder || 0;
+            }
         }
 
         // Fetch problems for the contest
-        const problems = await Promise.all(contest.problemSlugs.map(async (pSlug) => {
-            // Internal fetch or registry access? 
-            // We can just return the slugs for now or fetch basic info
+        const problems = await Promise.all(contest.problemSlugs.map(async (pSlug, index) => {
+            const problemInfo = problemRegistry.find(p => p.slug === pSlug);
             return {
                 slug: pSlug,
-                title: pSlug.split('-').map(w => w.charAt(0)).join('').toUpperCase(), // Mock title if info not readily available here
+                title: problemInfo?.title || pSlug,
+                isLocked: index > currentProgressIndex,
+                isCompleted: index < currentProgressIndex
             };
         }));
 
@@ -164,10 +179,64 @@ export const getContestBySlug = async (req: AuthRequest, res: Response) => {
             ...contest,
             registrationCount,
             isRegistered,
-            problems
+            problems,
+            currentProgressIndex
         });
     } catch (error) {
         logger.error("Failed to get contest by slug:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const getContestProblemByIndex = async (req: AuthRequest, res: Response) => {
+    const { slug, index } = req.params;
+    const userId = req.user?.id;
+
+    if (!index) {
+        return res.status(400).json({ message: "Index is required" });
+    }
+    const problemIndex = parseInt(index as string);
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const contest = contestRegistry.find(c => c.slug === slug);
+        if (!contest) return res.status(404).json({ message: "Contest not found" });
+
+        // Check registration
+        const registration = await (prisma as any).contestRegistration.findUnique({
+            where: { contestId_userId: { contestId: contest.id, userId } }
+        });
+        if (!registration) return res.status(403).json({ message: "Not registered for this contest" });
+
+        // Check progress
+        const progress = await (prisma as any).contestProgress.findUnique({
+            where: { contestId_userId: { contestId: contest.id, userId } }
+        });
+
+        const currentOrder = progress?.currentOrder || 0;
+        if (problemIndex > currentOrder) {
+            return res.status(403).json({ 
+                message: "You must solve previous problems first",
+                requiredIndex: currentOrder 
+            });
+        }
+
+        const problemSlug = contest.problemSlugs[problemIndex];
+        if (!problemSlug) return res.status(404).json({ message: "Problem not found in contest" });
+
+        const problem = problemRegistry.find(p => p.slug === problemSlug);
+        if (!problem) return res.status(404).json({ message: "Problem not found" });
+
+        res.json({
+            problem,
+            contestId: contest.id,
+            totalProblems: contest.problemSlugs.length
+        });
+    } catch (error) {
+        logger.error("Failed to get contest problem:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

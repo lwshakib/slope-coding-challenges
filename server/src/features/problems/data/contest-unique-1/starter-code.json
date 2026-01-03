@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number} n\n * @return {string[]}\n */\nvar fizzBuzz = function(n) {\n    \n};",
+  "python": "class Solution:\n    def fizzBuzz(self, n: int) -> List[str]:\n        ",
+  "cpp": "class Solution {\npublic:\n    vector<string> fizzBuzz(int n) {\n        \n    }\n};"
+}

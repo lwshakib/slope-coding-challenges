@@ -12,6 +12,7 @@ export const startResultConsumer = async () => {
         if (msg !== null) {
             try {
                 const data = JSON.parse(msg.content.toString());
+                logger.info(`Received result: ${JSON.stringify(data)}`);
                 const { submissionId, status, caseIdx, totalCases, isTest, ...resultDetails } = data;
 
                 await prisma.$transaction(async (tx) => {
@@ -22,10 +23,10 @@ export const startResultConsumer = async () => {
                     if (isTest) {
                         testRun = await (tx as any).testRun.findUnique({ where: { id: submissionId } });
                         if (!testRun) {
-                            submission = await tx.submission.findUnique({ where: { id: submissionId } });
+                            submission = await (tx as any).submission.findUnique({ where: { id: submissionId } });
                         }
                     } else {
-                        submission = await tx.submission.findUnique({ where: { id: submissionId } });
+                        submission = await (tx as any).submission.findUnique({ where: { id: submissionId } });
                         if (!submission) {
                             testRun = await (tx as any).testRun.findUnique({ where: { id: submissionId } });
                         }
@@ -47,7 +48,7 @@ export const startResultConsumer = async () => {
                             data: { status: "PENDING" }
                         });
                     } else {
-                        await tx.submission.update({
+                        await (tx as any).submission.update({
                             where: { id: recordId },
                             data: { status: "PENDING" }
                         });
@@ -132,15 +133,62 @@ export const startResultConsumer = async () => {
                         };
 
                         if (effectiveIsTest) {
+                            logger.info(`Updating test run ${recordId} (type: ${typeof recordId})`);
                             await (tx as any).testRun.update({
                                 where: { id: recordId },
                                 data: updateData
                             });
                         } else {
-                            await tx.submission.update({
+                            logger.info(`Updating submission ${recordId} (type: ${typeof recordId})`);
+                            const updatedSubmission = await (tx as any).submission.update({
                                 where: { id: recordId },
                                 data: updateData
                             });
+
+                            // Handle contest progress
+                            if (!anyFailed && updatedSubmission.contestId) {
+                                const contestProblem = await (tx as any).contestProblem.findUnique({
+                                    where: {
+                                        contestId_problemSlug: {
+                                            contestId: updatedSubmission.contestId,
+                                            problemSlug: updatedSubmission.problemSlug
+                                        }
+                                    }
+                                });
+
+                                if (contestProblem) {
+                                    // Check current progress and only update if we're advancing
+                                    const currentProgress = await (tx as any).contestProgress.findUnique({
+                                        where: {
+                                            contestId_userId: {
+                                                contestId: updatedSubmission.contestId,
+                                                userId: updatedSubmission.userId
+                                            }
+                                        }
+                                    });
+
+                                    const newProgressOrder = contestProblem.order + 1;
+                                    
+                                    // Only update if this advances the progress
+                                    if (!currentProgress || currentProgress.currentOrder < newProgressOrder) {
+                                        await (tx as any).contestProgress.upsert({
+                                            where: {
+                                                contestId_userId: {
+                                                    contestId: updatedSubmission.contestId,
+                                                    userId: updatedSubmission.userId
+                                                }
+                                            },
+                                            update: { currentOrder: newProgressOrder },
+                                            create: {
+                                                contestId: updatedSubmission.contestId,
+                                                userId: updatedSubmission.userId,
+                                                currentOrder: newProgressOrder
+                                            }
+                                        });
+                                        logger.info(`Advanced contest progress for user ${updatedSubmission.userId} in contest ${updatedSubmission.contestId} to problem ${newProgressOrder}`);
+                                    }
+                                }
+                            }
                         }
                         
                         logger.info(`Completed ${effectiveIsTest ? 'test run' : 'submission'} ${recordId}. Status: ${anyFailed ? "FAILED" : "ACCEPTED"}`);

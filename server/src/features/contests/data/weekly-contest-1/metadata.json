@@ -6,5 +6,5 @@
   "startTime": "2026-02-01T10:00:00Z",
   "endTime": "2026-02-01T12:00:00Z",
   "prizes": "$100 Prize Pool",
-  "problemSlugs": ["two-sum", "add-two-numbers", "longest-substring-without-repeating-characters"]
+  "problemSlugs": ["contest-unique-1", "contest-unique-2"]
 }

@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -128,6 +128,7 @@ model Submission {
   notes       String?
   runtime     Float?   // Total/Max runtime in ms
   memory      Float?   // Max memory used in KB
+  contestId   String?
   createdAt   DateTime @default(now())
   testResults TestCaseResult[]
 
@@ -165,6 +166,7 @@ model TestRun {
   output      String?
   runtime     Float?   // Total/Max runtime in ms
   memory      Float?   // Max memory used in KB
+  contestId   String?
   createdAt   DateTime @default(now())
   testResults TestRunResult[]
 
@@ -192,16 +194,42 @@ model TestRunResult {
 }
 
 model Contest {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  startTime   DateTime
-  endTime     DateTime
-  prizes      String?
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  slug          String?  @unique
+  startTime     DateTime
+  endTime       DateTime
+  prizes        String?
   registrations ContestRegistration[]
-  createdAt   DateTime @default(now())
+  problems      ContestProblem[]
+  createdAt     DateTime @default(now())
 
   @@map("contest")
+}
+
+model ContestProblem {
+  id          String   @id @default(cuid())
+  contestId   String
+  contest     Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  problemSlug String
+  order       Int      // 0, 1, 2...
+
+  @@unique([contestId, problemSlug])
+  @@unique([contestId, order])
+  @@map("contest_problem")
+}
+
+model ContestProgress {
+  id               String   @id @default(cuid())
+  contestId        String
+  userId           String
+  currentOrder     Int      @default(0) // Which problem index they are on (0-based)
+  completed        Boolean  @default(false)
+  updatedAt        DateTime @updatedAt
+
+  @@unique([contestId, userId])
+  @@map("contest_progress")
 }
 
 model ContestRegistration {

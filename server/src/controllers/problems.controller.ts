@@ -4,7 +4,9 @@ import { prisma } from "../services/prisma.services";
 import { sendToQueue } from "../services/rabbitmq.services";
 
 export const getAllProblems = (req: Request, res: Response) => {
-  res.json(problemRegistry);
+  // Filter out contest-only problems
+  const publicProblems = problemRegistry.filter(p => !p.isContestOnly);
+  res.json(publicProblems);
 };
 
 export const getProblemBySlug = (req: Request, res: Response) => {
@@ -19,7 +21,7 @@ export const getProblemBySlug = (req: Request, res: Response) => {
 };
 
 export const runSolution = async (req: Request, res: Response) => {
-    const { slug, code, language } = req.body;
+    const { slug, code, language, contestId } = req.body;
     const userId = (req as any).user?.id;
 
     if (!userId) {
@@ -32,13 +34,14 @@ export const runSolution = async (req: Request, res: Response) => {
     }
 
     try {
-        const testRun = await prisma.testRun.create({
+        const testRun = await (prisma as any).testRun.create({
             data: {
                 userId,
                 problemSlug: slug,
                 code,
                 language,
-                status: "PENDING"
+                status: "PENDING",
+                contestId
             }
         });
 
@@ -69,7 +72,7 @@ export const runSolution = async (req: Request, res: Response) => {
 };
 
 export const submitSolution = async (req: Request, res: Response) => {
-    const { slug, code, language } = req.body;
+    const { slug, code, language, contestId } = req.body;
     const userId = (req as any).user?.id;
 
     if (!userId) {
@@ -82,13 +85,14 @@ export const submitSolution = async (req: Request, res: Response) => {
     }
 
     try {
-        const submission = await prisma.submission.create({
+        const submission = await (prisma as any).submission.create({
             data: {
                 userId,
                 problemSlug: slug,
                 code,
                 language,
-                status: "PENDING"
+                status: "PENDING",
+                contestId
             }
         });
 
@@ -149,7 +153,7 @@ export const getTestRunStatus = async (req: Request, res: Response) => {
     }
 
     try {
-        const testRun = await prisma.testRun.findUnique({
+        const testRun = await (prisma as any).testRun.findUnique({
             where: { id, userId }
         });
 
@@ -212,7 +216,7 @@ export const getSubmissionsBySlug = async (req: Request, res: Response) => {
 export const getAllSolutionsBySlug = async (req: Request, res: Response) => {
     const { slug } = req.params;
     try {
-        const solutions = await prisma.communitySolution.findMany({
+        const solutions = await (prisma as any).communitySolution.findMany({
             where: { problemSlug: slug },
             include: {
                 user: {
@@ -244,7 +248,7 @@ export const postSolution = async (req: Request, res: Response) => {
     }
 
     try {
-        const solution = await prisma.communitySolution.create({
+        const solution = await (prisma as any).communitySolution.create({
             data: {
                 userId,
                 problemSlug: slug,
@@ -263,7 +267,7 @@ export const postSolution = async (req: Request, res: Response) => {
 export const likeSolution = async (req: Request, res: Response) => {
     const { solutionId } = req.params;
     try {
-        const solution = await prisma.communitySolution.update({
+        const solution = await (prisma as any).communitySolution.update({
             where: { id: solutionId },
             data: {
                 likes: { increment: 1 }
@@ -278,7 +282,7 @@ export const likeSolution = async (req: Request, res: Response) => {
 export const getCommentsBySolutionId = async (req: Request, res: Response) => {
     const { solutionId } = req.params;
     try {
-        const comments = await prisma.comment.findMany({
+        const comments = await (prisma as any).comment.findMany({
             where: { communitySolutionId: solutionId },
             include: {
                 user: {
@@ -307,7 +311,7 @@ export const postComment = async (req: Request, res: Response) => {
     }
 
     try {
-        const comment = await prisma.comment.create({
+        const comment = await (prisma as any).comment.create({
             data: {
                 userId,
                 communitySolutionId: solutionId,
