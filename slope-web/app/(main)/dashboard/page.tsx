@@ -42,27 +42,46 @@ export default function DashboardPage() {
     });
     const [recentProblems, setRecentProblems] = useState<any[]>([]);
     const [featuredContest, setFeaturedContest] = useState<any>(null);
+    const [totals, setTotals] = useState({ Easy: 0, Medium: 0, Hard: 0, total: 0 });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                // Fetch problems to calculate stats
+                // Fetch problems to calculate stats and list
                 const probRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/problems`, {
                     credentials: 'include'
                 });
                 const problems = await probRes.json();
                 
-                if (Array.isArray(problems)) {
-                    const solved = problems.filter(p => p.status === 'solved');
+                // Fetch profile for accurate stats
+                const profileRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/profile`, {
+                    credentials: 'include'
+                });
+                const profile = await profileRes.json();
+
+                if (Array.isArray(problems) && profile) {
                     setStats({
-                        totalSolved: solved.length,
-                        streak: 12, // Still mock for now as we don't track it in DB yet
-                        easyCount: solved.filter(p => p.difficulty === 'Easy').length,
-                        mediumCount: solved.filter(p => p.difficulty === 'Medium').length,
-                        hardCount: solved.filter(p => p.difficulty === 'Hard').length,
+                        totalSolved: profile.solvedCount,
+                        streak: 12, // Still mock
+                        easyCount: profile.difficultyCounts.Easy,
+                        mediumCount: profile.difficultyCounts.Medium,
+                        hardCount: profile.difficultyCounts.Hard,
                     });
+                    
+                    // Mark problems as solved if they appear in recent submissions or similar
+                    // For now, let's just show the first 3 problems
                     setRecentProblems(problems.slice(0, 3));
+
+                    const easyTotal = problems.filter(p => p.difficulty === 'Easy').length;
+                    const mediumTotal = problems.filter(p => p.difficulty === 'Medium').length;
+                    const hardTotal = problems.filter(p => p.difficulty === 'Hard').length;
+                    setTotals({
+                        Easy: easyTotal,
+                        Medium: mediumTotal,
+                        Hard: hardTotal,
+                        total: problems.length
+                    });
                 }
 
                 // Fetch contests to get the first upcoming one
@@ -129,7 +148,7 @@ export default function DashboardPage() {
                     
                     {/* Daily Challenge Card */}
                     <Link href="/problems/two-sum">
-                        <Card className="relative overflow-hidden border-primary/30 bg-zinc-950 group cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] shadow-2xl">
+                        <Card className="relative overflow-hidden border-primary/20 bg-card group cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] shadow-2xl">
                              <div className="absolute top-0 right-0 size-64 bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32 transition-all group-hover:bg-primary/20" />
                              <CardContent className="p-8 relative z-10">
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -139,13 +158,13 @@ export default function DashboardPage() {
                                             <span>Daily Challenge</span>
                                         </div>
                                         <div>
-                                            <h2 className="text-3xl font-black italic tracking-tight text-white mb-2">Two Sum</h2>
+                                            <h2 className="text-3xl font-black italic tracking-tight text-foreground mb-2">Two Sum</h2>
                                             <div className="flex gap-2">
                                                 <Badge className="bg-green-500/10 text-green-500 border-none font-bold uppercase text-[10px]">Easy</Badge>
-                                                <Badge className="bg-white/5 text-zinc-400 border-none font-bold uppercase text-[10px]">Array</Badge>
+                                                <Badge className="bg-muted text-muted-foreground border-none font-bold uppercase text-[10px]">Array</Badge>
                                             </div>
                                         </div>
-                                        <p className="text-zinc-400 text-sm max-w-md font-medium">
+                                        <p className="text-muted-foreground text-sm max-w-md font-medium">
                                             The classic foundation. Find two numbers that sum to target.
                                         </p>
                                     </div>
@@ -167,9 +186,9 @@ export default function DashboardPage() {
                             </CardHeader>
                             <CardContent className="space-y-6 pt-2">
                                 {[
-                                    { label: 'Easy', val: stats.easyCount, max: 3, color: 'bg-green-500' },
-                                    { label: 'Medium', val: stats.mediumCount, max: 4, color: 'bg-orange-500' },
-                                    { label: 'Hard', val: stats.hardCount, max: 1, color: 'bg-red-500' },
+                                    { label: 'Easy', val: stats.easyCount, max: totals.Easy || 1, color: 'bg-green-500' },
+                                    { label: 'Medium', val: stats.mediumCount, max: totals.Medium || 1, color: 'bg-orange-500' },
+                                    { label: 'Hard', val: stats.hardCount, max: totals.Hard || 1, color: 'bg-red-500' },
                                 ].map((item) => (
                                     <div key={item.label} className="space-y-2">
                                         <div className="flex justify-between text-xs font-bold">
@@ -198,7 +217,7 @@ export default function DashboardPage() {
                                                 <div className="flex items-center gap-3">
                                                     <div className={cn(
                                                         "size-2 rounded-full",
-                                                        prob.status === 'solved' ? 'bg-green-500' : 'bg-zinc-600'
+                                                        prob.status === 'solved' ? 'bg-green-500' : 'bg-muted-foreground/30'
                                                     )} />
                                                     <div className="flex flex-col">
                                                         <span className="text-xs font-bold truncate max-w-[150px]">{prob.title}</span>
@@ -231,31 +250,31 @@ export default function DashboardPage() {
                                 <div>
                                     <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-1">Global Standing</div>
                                     <div className="text-2xl font-black italic">Beginner</div>
-                                    <div className="text-[10px] font-bold text-muted-foreground">TOP <span className="text-primary">{((total - stats.totalSolved)/total * 100).toFixed(1)}%</span> WORLDWIDE</div>
+                                    <div className="text-[10px] font-bold text-muted-foreground">TOP <span className="text-primary">{totals.total > 0 ? ((totals.total - stats.totalSolved)/totals.total * 100).toFixed(1) : "0"}%</span> WORLDWIDE</div>
                                 </div>
                             </div>
                          </CardContent>
                     </Card>
 
                     {/* Weekly Contest Promo */}
-                    <Card className="border-border/40 bg-zinc-950 shadow-xl group overflow-hidden">
+                    <Card className="border-border/40 bg-card shadow-xl group overflow-hidden">
                         <CardHeader className="pb-2">
                              <div className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-[0.2em] mb-1">
                                 <Star className="size-3 fill-primary" />
                                 <span>Upcoming Round</span>
                              </div>
-                            <CardTitle className="text-xl font-black tracking-tighter italic text-white flex items-center justify-between">
+                            <CardTitle className="text-xl font-black tracking-tighter italic text-foreground flex items-center justify-between">
                                 {featuredContest?.title || "Next Friday Round"} <ChevronRight className="size-4 group-hover:translate-x-1 transition-transform" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                              <div className="flex items-center gap-4">
-                                <Clock className="size-4 text-zinc-500" />
-                                <span className="text-xs font-bold text-zinc-400">
+                                <Clock className="size-4 text-muted-foreground" />
+                                <span className="text-xs font-bold text-muted-foreground">
                                     {featuredContest ? new Date(featuredContest.startTime).toLocaleString() : "TBD"}
                                 </span>
                              </div>
-                             <Button className="w-full bg-white text-black hover:bg-white/90 font-black italic uppercase tracking-widest text-[10px] h-10 shadow-xl shadow-white/5 transition-all active:scale-98" asChild>
+                             <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-black italic uppercase tracking-widest text-[10px] h-10 shadow-xl shadow-primary/5 transition-all active:scale-95" asChild>
                                 <Link href="/contests">Register Now</Link>
                              </Button>
                         </CardContent>
@@ -292,4 +311,3 @@ export default function DashboardPage() {
     )
 }
 
-const total = 8;

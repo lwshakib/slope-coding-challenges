@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { Logo } from '@/components/logo'
 import { authClient } from '@/lib/auth-client'
 import { 
@@ -17,7 +18,10 @@ import {
     Menu,
     X,
     Flame,
-    LogOut
+    LogOut,
+    Sun,
+    Moon,
+    Laptop
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,6 +33,10 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu"
 
 const navItems = [
@@ -40,6 +48,7 @@ const navItems = [
 export function AppHeader() {
     const pathname = usePathname()
     const router = useRouter()
+    const { setTheme } = useTheme()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
     const { data: session } = authClient.useSession()
 
@@ -128,18 +137,44 @@ export function AppHeader() {
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
+                            <Link href="/profile">
+                                <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
+                                    <User className="size-4 mr-2" /> Profile
+                                </DropdownMenuItem>
+                            </Link>
+
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
+                                    <div className="relative size-4 mr-1">
+                                        <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                        <Moon className="absolute inset-0 size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                    </div>
+                                    <span>Appearance</span>
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuPortal>
+                                    <DropdownMenuSubContent className="rounded-xl border-border/40 bg-background/95 backdrop-blur-xl p-1">
+                                        <DropdownMenuItem onClick={() => setTheme("light")} className="rounded-lg px-3 py-2 cursor-pointer">
+                                            <Sun className="size-4 mr-2" /> Light
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setTheme("dark")} className="rounded-lg px-3 py-2 cursor-pointer">
+                                            <Moon className="size-4 mr-2" /> Dark
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setTheme("system")} className="rounded-lg px-3 py-2 cursor-pointer">
+                                            <Laptop className="size-4 mr-2" /> System
+                                        </DropdownMenuItem>
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuPortal>
+                            </DropdownMenuSub>
+
                             <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
-                                <User className="size-4 mr-3" /> Profile
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
-                                <Settings className="size-4 mr-3" /> Settings
+                                <Settings className="size-4 mr-2" /> Settings
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
                             <DropdownMenuItem 
                                 onClick={handleLogout}
                                 className="rounded-lg px-3 py-2 cursor-pointer text-destructive focus:bg-destructive/5 focus:text-destructive transition-colors"
                             >
-                                <LogOut className="size-4 mr-3" /> Sign Out
+                                <LogOut className="size-4 mr-2" /> Sign Out
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

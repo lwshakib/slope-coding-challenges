@@ -200,13 +200,6 @@ export default function ContestProblemIDE() {
                 setProblem(data.problem);
                 setContestId(data.contestId);
                 setTotalProblems(data.totalProblems);
-                
-                // Set starter code if no saved code
-                const savedCode = localStorage.getItem(`code-${data.problem.slug}-${language}`);
-                const codeToSet = savedCode || data.problem.starterCode?.[language] || "";
-                setCode(codeToSet);
-                codeMetadata.current = { language, code: codeToSet };
-
             } catch (error) {
                 console.error("Fetch error:", error);
                 toast.error("Internal server error");
@@ -230,6 +223,17 @@ export default function ContestProblemIDE() {
         if (savedLanguage) setLanguage(savedLanguage);
     }, []);
 
+    // Persistence: Load code from local storage or starter code
+    useEffect(() => {
+        if (problem && language) {
+            const savedCode = localStorage.getItem(`code-${problem.slug}-${language}`);
+            const codeToSet = savedCode || problem.starterCode?.[language] || "";
+            setCode(codeToSet);
+            // Update metadata to indicate this code belongs to the NEW language
+            codeMetadata.current = { language, code: codeToSet };
+        }
+    }, [problem, language]);
+
     // Persistence: Auto-save
     useEffect(() => {
         if (code && problem && language) {
@@ -244,12 +248,6 @@ export default function ContestProblemIDE() {
     const handleLanguageChange = (value: string) => {
         setLanguage(value);
         localStorage.setItem('last-selected-language', value);
-        if (problem) {
-            const savedCode = localStorage.getItem(`code-${problem.slug}-${value}`);
-            const codeToSet = savedCode || problem.starterCode?.[value] || "";
-            setCode(codeToSet);
-            codeMetadata.current = { language: value, code: codeToSet };
-        }
     }
 
     const getLanguageExtension = (lang: string) => {

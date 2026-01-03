@@ -795,11 +795,19 @@ export default function ProblemIDE() {
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
                             
+                            <Link href="/profile">
+                                <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
+                                    <User className="size-4 mr-2" /> Profile
+                                </DropdownMenuItem>
+                            </Link>
+                            
                             <DropdownMenuSub>
                                 <DropdownMenuSubTrigger className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
-                                    <Sun className="size-4 mr-3 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                                    <Moon className="absolute size-4 mr-3 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                                    <span className="ml-7">Appearance</span>
+                                    <div className="relative size-4 mr-1">
+                                        <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                        <Moon className="absolute inset-0 size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                    </div>
+                                    <span>Appearance</span>
                                 </DropdownMenuSubTrigger>
                                 <DropdownMenuPortal>
                                     <DropdownMenuSubContent className="rounded-xl border-border/40 bg-background/95 backdrop-blur-xl p-1">
@@ -817,14 +825,14 @@ export default function ProblemIDE() {
                             </DropdownMenuSub>
 
                             <DropdownMenuItem className="rounded-lg px-3 py-2 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
-                                <Settings className="size-4 mr-3" /> Settings
+                                <Settings className="size-4 mr-2" /> Settings
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className="bg-border/40 mx-2" />
                             <DropdownMenuItem 
                                 onClick={handleLogout}
                                 className="rounded-lg px-3 py-2 cursor-pointer text-destructive focus:bg-destructive/5 focus:text-destructive transition-colors"
                             >
-                                <LogOut className="size-4 mr-3" /> Sign Out
+                                <LogOut className="size-4 mr-2" /> Sign Out
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
