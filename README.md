@@ -1,4 +1,4 @@
-# 🏔️ Slope - Distributed Coding Challenges Platform
+# <img src="slope-web/public/logo.svg" alt="Slope Logo" width="32" height="32" style="vertical-align: middle;" /> Slope - Distributed Coding Challenges Platform
 
 [![Developed by](https://img.shields.io/badge/Developed%20by-lwshakib-blueviolet?style=for-the-badge&logo=github)](https://github.com/lwshakib)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
