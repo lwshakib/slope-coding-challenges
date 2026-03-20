@@ -1,9 +1,9 @@
+name: slope
 version: "3.8"
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
@@ -22,7 +22,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
     restart: unless-stopped
     ports:
       - "5672:5672"   # RabbitMQ port
