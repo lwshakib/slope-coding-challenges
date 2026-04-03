@@ -1,20 +1,27 @@
-import amqp from "amqplib";
 import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
+const WORK_DIR = "/app/work";
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
-const QUEUE = "python_queue";
-const RESULT_QUEUE = "result_queue";
+async function runCode() {
+    try {
+        // 1. Read files from the mounted volume
+        const code = fs.readFileSync(path.join(WORK_DIR, "code.txt"), "utf8");
+        const testCases = JSON.parse(fs.readFileSync(path.join(WORK_DIR, "testCases.json"), "utf8"));
+        const metadata = JSON.parse(fs.readFileSync(path.join(WORK_DIR, "metadata.json"), "utf8"));
+        const { functionName } = metadata;
 
-async function runCode(code: string, testCase: any, caseIdx: number, totalCases: number, functionName: string) {
-    const baseName = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-    const tempFile = path.resolve(__dirname, `${baseName}.py`);
-    
-    const wrapper = `
+        const results = [];
+
+        for (let i = 0; i < testCases.length; i++) {
+            const testCase = testCases[i];
+            const baseName = `/tmp/run_${Date.now()}_${i}`;
+            const pyFile = `${baseName}.py`;
+
+            const wrapper = `
 import json
 import sys
 import collections
@@ -33,6 +40,7 @@ def run_test():
         local_vars = {}
         input_str = """${testCase.input}"""
         import re
+        # Basic split for multiple assignments: "nums = [1,2], target = 3"
         parts = re.split(r',\\s*(?=[a-zA-Z_][a-zA-Z0-9_]*\\s*=)', input_str)
         for part in parts:
             exec(part.strip(), {}, local_vars)
@@ -74,144 +82,75 @@ def run_test():
 if __name__ == "__main__":
     run_test()
 `;
-    fs.writeFileSync(tempFile, wrapper);
+            fs.writeFileSync(pyFile, wrapper);
 
-    let result: any;
-
-    try {
-        const startTime = Date.now();
-        const { stdout, stderr } = await execAsync(`python3 "${tempFile}"`, { timeout: 2000 });
-        const runtime = Date.now() - startTime;
-
-        if (stderr && stderr.includes("ERROR_MSG:")) {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "RUNTIME_ERROR",
-                input: testCase.input,
-                expected: testCase.expectedOutput,
-                error: stderr.replace("ERROR_MSG:", "").trim()
-            };
-        } else if (stderr) {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "RUNTIME_ERROR",
-                input: testCase.input,
-                expected: testCase.expectedOutput,
-                error: stderr.trim()
-            };
-        } else {
-            const stdoutResult = stdout.trim();
-            let parsed;
+            // Run
             try {
-                parsed = JSON.parse(stdoutResult);
-            } catch (e) {
-                parsed = { result: stdoutResult, runtime: 0, memory: 0 };
-            }
+                const { stdout, stderr } = await execAsync(`python3 "${pyFile}"`, { timeout: 2000 });
 
-            const actualResult = parsed.result;
-            const runtime = parsed.runtime || 0;
-            const memory = parsed.memory || 0;
-
-            const expectedParsed = JSON.parse(testCase.expectedOutput);
-            const isMatch = JSON.stringify(actualResult) === JSON.stringify(expectedParsed);
-
-            if (!isMatch) {
-                result = {
-                    caseIdx,
-                    totalCases,
-                    status: "FAILED",
-                    input: testCase.input,
-                    expected: testCase.expectedOutput,
-                    actual: JSON.stringify(actualResult),
-                    runtime,
-                    memory
-                };
-            } else {
-                result = {
-                    caseIdx,
-                    totalCases,
-                    status: "PASSED",
-                    input: testCase.input,
-                    expected: testCase.expectedOutput,
-                    actual: JSON.stringify(actualResult),
-                    runtime,
-                    memory
-                };
-            }
-        }
-    } catch (error: any) {
-        if (error.killed) {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "TLE",
-                input: testCase?.input || "",
-                expected: testCase?.expectedOutput || "",
-                error: "Time Limit Exceeded"
-            };
-        } else {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "RUNTIME_ERROR",
-                input: testCase?.input || "",
-                expected: testCase?.expectedOutput || "",
-                error: error.stderr || error.message
-            };
-        }
-    } finally {
-        if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
-    }
-
-    return result;
-}
-
-async function startWorker() {
-    try {
-        const connection = await amqp.connect(RABBITMQ_URL);
-        const channel = await connection.createChannel();
-
-        await channel.assertQueue(QUEUE, { durable: true });
-        await channel.assertQueue(RESULT_QUEUE, { durable: true });
-
-        console.log(`Worker listening on ${QUEUE}`);
-
-        channel.consume(QUEUE, async (msg) => {
-            if (msg !== null) {
-                try {
-                    const data = JSON.parse(msg.content.toString());
-                    const { submissionId, code, testCase, caseIdx, totalCases, functionName, isTest } = data;
-                    
-                    if (!testCase) {
-                        console.error(`Invalid message received: missing testCase. Submission: ${submissionId}`);
-                        channel.ack(msg);
-                        return;
+                if (stderr && stderr.includes("ERROR_MSG:")) {
+                    results.push({
+                        caseIdx: i,
+                        status: "RUNTIME_ERROR",
+                        input: testCase.input,
+                        expected: testCase.expectedOutput,
+                        error: stderr.replace("ERROR_MSG:", "").trim()
+                    });
+                } else if (stderr) {
+                    results.push({
+                        caseIdx: i,
+                        status: "RUNTIME_ERROR",
+                        input: testCase.input,
+                        expected: testCase.expectedOutput,
+                        error: stderr.trim()
+                    });
+                } else {
+                    const stdoutResult = stdout.trim();
+                    let parsed;
+                    try {
+                        parsed = JSON.parse(stdoutResult);
+                    } catch (e) {
+                        parsed = { result: stdoutResult, runtime: 0, memory: 0 };
                     }
 
-                    console.log(`Processing ${isTest ? 'test run' : 'submission'} ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
+                    const actualResult = parsed.result;
+                    const runtime = parsed.runtime || 0;
+                    const memory = parsed.memory || 0;
 
-                    const result = await runCode(code, testCase, caseIdx, totalCases, functionName);
+                    const expectedParsed = JSON.parse(testCase.expectedOutput);
+                    const isMatch = JSON.stringify(actualResult) === JSON.stringify(expectedParsed);
 
-                    channel.sendToQueue(RESULT_QUEUE, Buffer.from(JSON.stringify({
-                        submissionId,
-                        isTest,
-                        ...result
-                    })), { persistent: true });
-
-                    channel.ack(msg);
-                    console.log(`Done processing ${submissionId} - Case ${(caseIdx ?? 0) + 1}`);
-                } catch (err) {
-                    console.error("Error processing message:", err);
-                    channel.ack(msg);
+                    results.push({
+                        caseIdx: i,
+                        status: isMatch ? "PASSED" : "FAILED",
+                        input: testCase.input,
+                        expected: testCase.expectedOutput,
+                        actual: JSON.stringify(actualResult),
+                        runtime,
+                        memory
+                    });
                 }
+            } catch (error: any) {
+                results.push({
+                    caseIdx: i,
+                    status: error.killed ? "TLE" : "RUNTIME_ERROR",
+                    input: testCase.input,
+                    expected: testCase.expectedOutput,
+                    error: (error.stderr || error.message)?.toString()
+                });
+            } finally {
+                if (fs.existsSync(pyFile)) fs.unlinkSync(pyFile);
             }
-        });
-    } catch (error) {
-        console.error("Worker failed:", error);
-        process.exit(1);
+        }
+
+        console.log(JSON.stringify(results));
+
+    } catch (error: any) {
+        console.log(JSON.stringify([{
+            status: "SYSTEM_ERROR",
+            error: error.message
+        }]));
     }
 }
 
-startWorker();
+runCode();

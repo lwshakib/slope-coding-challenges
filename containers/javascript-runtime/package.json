@@ -4,15 +4,11 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@prisma/client": "^7.2.0",
-    "@types/amqplib": "^0.10.8",
     "@types/bun": "latest",
-    "prisma": "^7.2.0"
+    "@types/node": "^25.5.0"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
-  "dependencies": {
-    "amqplib": "^0.10.9"
-  }
+  "dependencies": {}
 }

@@ -19,7 +19,6 @@ services:
       timeout: 5s
       retries: 5
 
-
   rabbitmq:
     image: rabbitmq:3-management-alpine
     restart: unless-stopped
@@ -34,39 +33,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  cpp-runtime:
-    build:
-      context: ./containers/cpp-runtime
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    deploy:
-      replicas: 3
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-  javascript-runtime:
-    build:
-      context: ./containers/javascript-runtime
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    deploy:
-      replicas: 3
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-  python-runtime:
-    build:
-      context: ./containers/python-runtime
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    deploy:
-      replicas: 3
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
 
 volumes:
   postgres_data:

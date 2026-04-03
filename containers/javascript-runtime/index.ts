@@ -1,16 +1,14 @@
-import amqp from "amqplib";
 import vm from "node:vm";
+import fs from "node:fs";
+import path from "node:path";
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
-const QUEUE = "javascript_queue";
-const RESULT_QUEUE = "result_queue";
+const WORK_DIR = "/app/work";
 
 /**
  * Basic parser for input strings like "nums = [2,7,11,15], target = 9"
  */
 function parseInputToJs(input: string): Record<string, any> {
     const vars: Record<string, any> = {};
-    // Split by comma but respect brackets
     const parts: string[] = [];
     let current = "";
     let bracketCount = 0;
@@ -30,11 +28,8 @@ function parseInputToJs(input: string): Record<string, any> {
         const [name, val] = part.split("=").map(s => s.trim());
         if (name && val) {
             try {
-                // Use Eval-like logic Safely or just JSON parse if it's a simple type
-                // Since this is for internal use, we can be a bit more flexible
                 vars[name] = JSON.parse(val.replace(/'/g, '"'));
             } catch (e) {
-                // Fallback for non-JSON values
                 vars[name] = val;
             }
         }
@@ -42,21 +37,28 @@ function parseInputToJs(input: string): Record<string, any> {
     return vars;
 }
 
-async function runCode(code: string, testCase: any, caseIdx: number, totalCases: number, functionName: string) {
-    let result: any;
+async function runCode() {
     try {
-        const inputVars = parseInputToJs(testCase.input);
-        const argValues = Object.values(inputVars);
+        // 1. Read files from the mounted volume
+        const code = fs.readFileSync(path.join(WORK_DIR, "code.txt"), "utf8");
+        const testCases = JSON.parse(fs.readFileSync(path.join(WORK_DIR, "testCases.json"), "utf8"));
+        const metadata = JSON.parse(fs.readFileSync(path.join(WORK_DIR, "metadata.json"), "utf8"));
+        const { functionName } = metadata;
 
-        const sandbox = {
-            console,
-            process: {
-                env: {}
-            }
-        };
-        const context = vm.createContext(sandbox);
+        const results = [];
 
-        const wrapperScript = `
+        for (let i = 0; i < testCases.length; i++) {
+            const testCase = testCases[i];
+            const inputVars = parseInputToJs(testCase.input);
+            const argValues = Object.values(inputVars);
+
+            const sandbox = {
+                console,
+                process: { env: {} }
+            };
+            const context = vm.createContext(sandbox);
+
+            const wrapperScript = `
 ${code}
 
 (function() {
@@ -86,97 +88,49 @@ ${code}
     return fn(...${JSON.stringify(argValues)});
 })()`;
 
-        const startMemory = process.memoryUsage().heapUsed;
-        const startTime = performance.now();
-        const vmResult = vm.runInContext(wrapperScript, context, { timeout: 1000 });
-        const runtime = performance.now() - startTime;
-        const endMemory = process.memoryUsage().heapUsed;
-        const memory = Math.max(0, (endMemory - startMemory) / 1024); // KB
-        
-        const expectedParsed = JSON.parse(testCase.expectedOutput);
-        const isMatch = JSON.stringify(vmResult) === JSON.stringify(expectedParsed);
-        
-        if (!isMatch) {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "FAILED",
-                input: testCase.input,
-                expected: testCase.expectedOutput,
-                actual: JSON.stringify(vmResult),
-                runtime,
-                memory
-            };
-        } else {
-            result = {
-                caseIdx,
-                totalCases,
-                status: "PASSED",
-                input: testCase.input,
-                expected: testCase.expectedOutput,
-                actual: JSON.stringify(vmResult),
-                runtime,
-                memory
-            };
-        }
-    } catch (error: any) {
-        result = {
-            caseIdx,
-            totalCases,
-            status: "RUNTIME_ERROR",
-            input: testCase?.input || "",
-            expected: testCase?.expectedOutput || "",
-            error: error.message
-        };
-    }
-
-    return result;
-}
-
-async function startWorker() {
-    try {
-        const connection = await amqp.connect(RABBITMQ_URL);
-        const channel = await connection.createChannel();
-
-        await channel.assertQueue(QUEUE, { durable: true });
-        await channel.assertQueue(RESULT_QUEUE, { durable: true });
-
-        console.log(`Worker listening on ${QUEUE}`);
-
-        channel.consume(QUEUE, async (msg) => {
-            if (msg !== null) {
-                try {
-                    const data = JSON.parse(msg.content.toString());
-                    const { submissionId, code, testCase, caseIdx, totalCases, functionName, isTest } = data;
-                    
-                    if (!testCase) {
-                        console.error(`Invalid message received: missing testCase. Submission: ${submissionId}`);
-                        channel.ack(msg);
-                        return;
-                    }
-
-                    console.log(`Processing ${isTest ? 'test run' : 'submission'} ${submissionId} - Case ${(caseIdx ?? 0) + 1}/${totalCases}`);
-
-                    const result = await runCode(code, testCase, caseIdx, totalCases, functionName);
-
-                    channel.sendToQueue(RESULT_QUEUE, Buffer.from(JSON.stringify({
-                        submissionId,
-                        isTest,
-                        ...result
-                    })), { persistent: true });
-
-                    channel.ack(msg);
-                    console.log(`Done processing ${submissionId} - Case ${(caseIdx ?? 0) + 1}`);
-                } catch (err) {
-                    console.error("Error processing message:", err);
-                    channel.ack(msg); // Ack to prevent infinite loop for malformed JSON
-                }
+            const startMemory = process.memoryUsage().heapUsed;
+            const startTime = performance.now();
+            
+            let vmResult;
+            try {
+                vmResult = vm.runInContext(wrapperScript, context, { timeout: 2000 });
+            } catch (e: any) {
+                results.push({
+                    caseIdx: i,
+                    status: "RUNTIME_ERROR",
+                    error: e.message,
+                    input: testCase.input,
+                    expected: testCase.expectedOutput
+                });
+                continue;
             }
-        });
-    } catch (error) {
-        console.error("Worker failed:", error);
-        process.exit(1);
+
+            const runtime = performance.now() - startTime;
+            const endMemory = process.memoryUsage().heapUsed;
+            const memory = Math.max(0, (endMemory - startMemory) / 1024); // KB
+            
+            const expectedParsed = JSON.parse(testCase.expectedOutput);
+            const isMatch = JSON.stringify(vmResult) === JSON.stringify(expectedParsed);
+            
+            results.push({
+                caseIdx: i,
+                status: isMatch ? "PASSED" : "FAILED",
+                input: testCase.input,
+                expected: testCase.expectedOutput,
+                actual: JSON.stringify(vmResult),
+                runtime,
+                memory
+            });
+        }
+
+        console.log(JSON.stringify(results));
+
+    } catch (error: any) {
+        console.log(JSON.stringify([{
+            status: "SYSTEM_ERROR",
+            error: error.message
+        }]));
     }
 }
 
-startWorker();
+runCode();
