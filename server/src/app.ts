@@ -4,13 +4,11 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import "dotenv/config";
-import { toNodeHandler } from "better-auth/node";
 
 import routes from "./routes";
 import { WEB_URL } from "./env";
 import { errorHandler } from "./middlewares/error.middlewares";
 import morganMiddleware from "./logger/morgan.logger";
-import { auth } from "./services/auth.services";
 
 
 
@@ -28,7 +26,6 @@ app.use(
 
 app.use(helmet());
 
-app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.get("/", (req, res) => {
   res.send("API is running");

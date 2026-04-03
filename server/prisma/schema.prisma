@@ -13,31 +13,9 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  submissions   Submission[]
-  testRuns      TestRun[]
-  registrations ContestRegistration[]
-  communitySolutions CommunitySolution[]
-  comments      Comment[]
-  points        Int       @default(0)
-
-  @@unique([email])
-  @@map("user")
-}
 
 model CommunitySolution {
   id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemSlug String
   title       String
   content     String
@@ -48,78 +26,27 @@ model CommunitySolution {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  @@index([userId])
   @@index([problemSlug])
   @@map("community_solution")
 }
 
 model Comment {
   id                  String             @id @default(cuid())
-  userId              String
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   communitySolutionId String
   communitySolution   CommunitySolution  @relation(fields: [communitySolutionId], references: [id], onDelete: Cascade)
   content             String
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
 
-  @@index([userId])
   @@index([communitySolutionId])
   @@map("comment")
 }
 
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
-  @@index([userId])
-  @@map("session")
-}
 
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
-}
 
 model Submission {
   id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemSlug String
   code        String
   language    String
@@ -128,11 +55,9 @@ model Submission {
   notes       String?
   runtime     Float?   // Total/Max runtime in ms
   memory      Float?   // Max memory used in KB
-  contestId   String?
   createdAt   DateTime @default(now())
   testResults TestCaseResult[]
 
-  @@index([userId])
   @@index([problemSlug])
   @@map("submission")
 }
@@ -157,8 +82,6 @@ model TestCaseResult {
 
 model TestRun {
   id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemSlug String
   code        String
   language    String
@@ -166,11 +89,9 @@ model TestRun {
   output      String?
   runtime     Float?   // Total/Max runtime in ms
   memory      Float?   // Max memory used in KB
-  contestId   String?
   createdAt   DateTime @default(now())
   testResults TestRunResult[]
 
-  @@index([userId])
   @@index([problemSlug])
   @@map("test_run")
 }
@@ -191,56 +112,5 @@ model TestRunResult {
 
   @@index([testRunId])
   @@map("test_run_result")
-}
-
-model Contest {
-  id            String   @id @default(cuid())
-  title         String
-  description   String
-  slug          String?  @unique
-  startTime     DateTime
-  endTime       DateTime
-  prizes        String?
-  registrations ContestRegistration[]
-  problems      ContestProblem[]
-  createdAt     DateTime @default(now())
-
-  @@map("contest")
-}
-
-model ContestProblem {
-  id          String   @id @default(cuid())
-  contestId   String
-  contest     Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  problemSlug String
-  order       Int      // 0, 1, 2...
-
-  @@unique([contestId, problemSlug])
-  @@unique([contestId, order])
-  @@map("contest_problem")
-}
-
-model ContestProgress {
-  id               String   @id @default(cuid())
-  contestId        String
-  userId           String
-  currentOrder     Int      @default(0) // Which problem index they are on (0-based)
-  completed        Boolean  @default(false)
-  updatedAt        DateTime @updatedAt
-
-  @@unique([contestId, userId])
-  @@map("contest_progress")
-}
-
-model ContestRegistration {
-  id        String   @id @default(cuid())
-  contestId String
-  contest   Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([contestId, userId])
-  @@map("contest_registration")
 }
 

@@ -19,10 +19,10 @@ Slope is a monorepo-style project containing a frontend, backend, and several Do
     git clone https://github.com/your-username/slope-coding-challenges.git
     cd slope-coding-challenges
     ```
-3.  **Install dependencies** in both `server` and `slope-web`.
+3.  **Install dependencies** in both `server` and `slope`.
     ```bash
     cd server && bun install
-    cd ../slope-web && bun install
+    cd ../slope && bun install
     ```
 4.  **Create a branch** for your feature or fix.
     ```bash

@@ -5,8 +5,7 @@ import { sendToQueue } from "../services/rabbitmq.services";
 
 export const getAllProblems = (req: Request, res: Response) => {
   // Filter out contest-only problems
-  const publicProblems = problemRegistry.filter(p => !p.isContestOnly);
-  res.json(publicProblems);
+  res.json(problemRegistry);
 };
 
 export const getProblemBySlug = (req: Request, res: Response) => {
@@ -21,12 +20,7 @@ export const getProblemBySlug = (req: Request, res: Response) => {
 };
 
 export const runSolution = async (req: Request, res: Response) => {
-    const { slug, code, language, contestId } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+    const { slug, code, language } = req.body;
 
     const problem = problemRegistry.find((p) => p.slug === slug);
     if (!problem) {
@@ -36,12 +30,10 @@ export const runSolution = async (req: Request, res: Response) => {
     try {
         const testRun = await (prisma as any).testRun.create({
             data: {
-                userId,
                 problemSlug: slug,
                 code,
                 language,
                 status: "PENDING",
-                contestId
             }
         });
 
@@ -72,12 +64,7 @@ export const runSolution = async (req: Request, res: Response) => {
 };
 
 export const submitSolution = async (req: Request, res: Response) => {
-    const { slug, code, language, contestId } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+    const { slug, code, language } = req.body;
 
     const problem = problemRegistry.find((p) => p.slug === slug);
     if (!problem) {
@@ -87,12 +74,10 @@ export const submitSolution = async (req: Request, res: Response) => {
     try {
         const submission = await (prisma as any).submission.create({
             data: {
-                userId,
                 problemSlug: slug,
                 code,
                 language,
                 status: "PENDING",
-                contestId
             }
         });
 
@@ -123,15 +108,9 @@ export const submitSolution = async (req: Request, res: Response) => {
 
 export const getSubmissionStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
     try {
         const submission = await prisma.submission.findUnique({
-            where: { id, userId }
+            where: { id }
         });
 
         if (!submission) {
@@ -146,15 +125,9 @@ export const getSubmissionStatus = async (req: Request, res: Response) => {
 
 export const getTestRunStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
     try {
         const testRun = await (prisma as any).testRun.findUnique({
-            where: { id, userId }
+            where: { id }
         });
 
         if (!testRun) {
@@ -170,15 +143,10 @@ export const getTestRunStatus = async (req: Request, res: Response) => {
 export const updateSubmissionNotes = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { notes } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
 
     try {
         const submission = await prisma.submission.update({
-            where: { id, userId },
+            where: { id },
             data: { notes }
         });
         res.json(submission);
@@ -189,17 +157,11 @@ export const updateSubmissionNotes = async (req: Request, res: Response) => {
 
 export const getSubmissionsBySlug = async (req: Request, res: Response) => {
     const { slug } = req.params;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
 
     try {
         const submissions = await prisma.submission.findMany({
             where: { 
                 problemSlug: slug,
-                userId 
             },
             orderBy: {
                 createdAt: 'desc'
@@ -219,9 +181,6 @@ export const getAllSolutionsBySlug = async (req: Request, res: Response) => {
         const solutions = await (prisma as any).communitySolution.findMany({
             where: { problemSlug: slug },
             include: {
-                user: {
-                    select: { name: true, image: true }
-                },
                 _count: {
                     select: { comments: true }
                 }
@@ -237,12 +196,6 @@ export const getAllSolutionsBySlug = async (req: Request, res: Response) => {
 export const postSolution = async (req: Request, res: Response) => {
     const { slug } = req.params;
     const { title, content, language, code } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
     if (!slug) {
         return res.status(400).json({ message: "Slug is required" });
     }
@@ -250,7 +203,6 @@ export const postSolution = async (req: Request, res: Response) => {
     try {
         const solution = await (prisma as any).communitySolution.create({
             data: {
-                userId,
                 problemSlug: slug,
                 title,
                 content,
@@ -284,11 +236,6 @@ export const getCommentsBySolutionId = async (req: Request, res: Response) => {
     try {
         const comments = await (prisma as any).comment.findMany({
             where: { communitySolutionId: solutionId },
-            include: {
-                user: {
-                    select: { name: true, image: true }
-                }
-            },
             orderBy: { createdAt: 'asc' }
         });
         res.json(comments);
@@ -300,12 +247,6 @@ export const getCommentsBySolutionId = async (req: Request, res: Response) => {
 export const postComment = async (req: Request, res: Response) => {
     const { solutionId } = req.params;
     const { content } = req.body;
-    const userId = (req as any).user?.id;
-
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
     if (!solutionId) {
         return res.status(400).json({ message: "solutionId is required" });
     }
@@ -313,14 +254,8 @@ export const postComment = async (req: Request, res: Response) => {
     try {
         const comment = await (prisma as any).comment.create({
             data: {
-                userId,
                 communitySolutionId: solutionId,
                 content
-            },
-            include: {
-                user: {
-                    select: { name: true, image: true }
-                }
             }
         });
         res.json(comment);
