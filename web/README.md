@@ -1,6 +1,6 @@
-# Slope Web Client
+# Web Client
 
-The **Slope Web Client** is the user-facing frontend of the Slope platform. It provides a modern, responsive, and immersive interface for developers to solve algorithmic challenges.
+The **Web Client** is the user-facing frontend of the Slope platform. It provides a modern, responsive, and immersive interface for developers to solve algorithmic challenges.
 
 ## 🎨 Design Philosophy
 
@@ -55,7 +55,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 ## 📦 Directory Structure
 
 ```
-slope/
+web/
 ├── app/                # Next.js App Router pages
 ├── components/         # Reusable UI components (buttons, cards, IDE)
 ├── lib/                # Utilities, hooks, and API clients

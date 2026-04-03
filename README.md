@@ -1,4 +1,4 @@
-# <img src="slope/public/logo.svg" alt="Slope Logo" width="32" height="32" style="vertical-align: middle;" /> Slope - Distributed Coding Challenges Platform
+# <img src="web/public/logo.svg" alt="Slope Logo" width="32" height="32" style="vertical-align: middle;" /> Slope - Distributed Coding Challenges Platform
 
 [![Developed by](https://img.shields.io/badge/Developed%20by-lwshakib-blueviolet?style=for-the-badge&logo=github)](https://github.com/lwshakib)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
@@ -8,9 +8,9 @@
 <br />
 
 <div align="center">
-  <img src="slope/public/light.png" alt="Slope Light Mode" width="45%" />
+  <img src="web/public/light.png" alt="Slope Light Mode" width="45%" />
   &nbsp;
-  <img src="slope/public/dark.png" alt="Slope Dark Mode" width="45%" />
+  <img src="web/public/dark.png" alt="Slope Dark Mode" width="45%" />
 </div>
 
 <br />
@@ -34,7 +34,7 @@ graph TD
 
 ### Core Components
 
-1.  **[Slope Web (`/slope`)](./slope/README.md)**: The Next.js frontend. Features a rich IDE, dashboards, and detailed analytics.
+1.  **[Web (`/web`)](./web/README.md)**: The Next.js frontend. Features a rich IDE, dashboards, and detailed analytics.
 2.  **[Slope Server (`/server`)](./server/README.md)**: The Node.js/Bun backend. Handles auth, problem management, and acts as the API gateway.
 3.  **Workers & Runtimes (`/containers`)**:
     -   **Worker System**: Consumes submission jobs from RabbitMQ.
@@ -93,7 +93,7 @@ bun dev
 In a new terminal, navigate to the web client directory.
 
 ```bash
-cd slope
+cd web
 bun install
 bun dev
 ```

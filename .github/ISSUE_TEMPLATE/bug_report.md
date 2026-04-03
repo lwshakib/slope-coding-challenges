@@ -12,7 +12,7 @@ assignees: []
 
 ## 🛠️ Feature Area
 
-- [ ] Web Frontend (`/slope-web`)
+- [ ] Web Frontend (`/web`)
 - [ ] API Server (`/server`)
 - [ ] Database (Prisma/PostgreSQL)
 - [ ] Message Queue (RabbitMQ)
