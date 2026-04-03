@@ -123,49 +123,47 @@ export default function Home() {
                             </div>
 
                             {/* Filter Section */}
-                            <Card className="border-border/40 bg-card/40 backdrop-blur-md overflow-hidden shadow-sm">
-                                <CardContent className="p-4">
-                                    <div className="flex flex-col md:flex-row gap-4 items-center">
-                                        <div className="relative flex-1 w-full">
-                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                                            <Input 
-                                                placeholder="Search question titles or tags..." 
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-10 bg-background/40 border-border/40 focus-visible:ring-primary/20 h-11"
-                                            />
-                                        </div>
-                                        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto no-scrollbar">
-                                            <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                                                <SelectTrigger className="min-w-[130px] bg-background/40 h-11">
-                                                    <SelectValue placeholder="Difficulty" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All Levels</SelectItem>
-                                                    <SelectItem value="easy">Easy</SelectItem>
-                                                    <SelectItem value="medium">Medium</SelectItem>
-                                                    <SelectItem value="hard">Hard</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 border-border/40">
-                                                <Filter className="size-4" />
-                                            </Button>
-                                            <Button 
-                                                onClick={() => {
-                                                    const random = problems[Math.floor(Math.random() * problems.length)];
-                                                    if (random) window.location.href = `/problems/${random.slug}`;
-                                                }}
-                                                className="bg-primary hover:bg-primary/90 h-11 px-6 font-semibold shrink-0 shadow-lg shadow-primary/20"
-                                            >
-                                                Pick Random
-                                            </Button>
-                                        </div>
+                            <div className="py-2">
+                                <div className="flex flex-col md:flex-row gap-4 items-center">
+                                    <div className="relative flex-1 w-full">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                                        <Input 
+                                            placeholder="Search question titles or tags..." 
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="pl-10 bg-background/40 border-border/10 focus-visible:ring-primary/20 h-11 rounded-xl"
+                                        />
                                     </div>
-                                </CardContent>
-                            </Card>
+                                    <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto no-scrollbar">
+                                        <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                                            <SelectTrigger className="min-w-[130px] bg-background/40 h-11 rounded-xl border-border/10">
+                                                <SelectValue placeholder="Difficulty" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Levels</SelectItem>
+                                                <SelectItem value="easy">Easy</SelectItem>
+                                                <SelectItem value="medium">Medium</SelectItem>
+                                                <SelectItem value="hard">Hard</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 border-border/10 rounded-xl">
+                                            <Filter className="size-4" />
+                                        </Button>
+                                        <Button 
+                                            onClick={() => {
+                                                const random = problems[Math.floor(Math.random() * problems.length)];
+                                                if (random) window.location.href = `/problems/${random.slug}`;
+                                            }}
+                                            className="bg-primary hover:bg-primary/90 h-11 px-6 font-semibold shrink-0 shadow-lg shadow-primary/20 rounded-xl"
+                                        >
+                                            Pick Random
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Problem Table Wrapper */}
-                            <div className="rounded-2xl border border-border/40 bg-card/20 shadow-xl overflow-hidden backdrop-blur-sm min-h-[400px]">
+                            <div className="min-h-[400px]">
                                 <Table>
                                     <TableHeader className="bg-muted/30">
                                         <TableRow className="hover:bg-transparent border-border/40">
