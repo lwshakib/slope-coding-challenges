@@ -37,8 +37,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import Link from 'next/link'
-import { Logo } from '@/components/logo'
-import { AppHeader } from '@/components/app-header'
 
 interface Problem {
     id: string;
@@ -96,44 +94,10 @@ export default function Home() {
 
     return (
         <div className="min-h-screen w-full bg-zinc-50 dark:bg-black/95 flex flex-col">
-            <AppHeader />
             <main className="flex-1 py-12">
-                <div className="container mx-auto px-4 max-w-7xl animate-in fade-in duration-700">
-                    {/* Hero Banner */}
-                    <div className="relative mb-12 rounded-[2rem] overflow-hidden border border-border/40 bg-gradient-to-br from-primary/5 via-background to-primary/10 p-10 md:p-14 shadow-2xl">
-                        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10" />
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                                    <Zap className="size-4 fill-primary" />
-                                    <span className="uppercase tracking-widest text-[11px] font-bold">Start solving today</span>
-                                </div>
-                                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
-                                    Problem <span className="text-primary italic">Set</span>
-                                </h1>
-                                <p className="text-muted-foreground text-lg max-w-xl font-medium leading-relaxed">
-                                    Sharpen your skills with our curated set of technical interview questions. No sign-up required.
-                                </p>
-                            </div>
-                            <div className="flex gap-4 shrink-0">
-                                <Card className="bg-primary/5 border-primary/10 px-5 py-3 flex flex-col items-center justify-center min-w-[110px]">
-                                    <span className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">Solved</span>
-                                    <span className="text-2xl font-black text-primary">{solvedCount} / {totalCount}</span>
-                                </Card>
-                                <Card className="bg-orange-500/5 border-orange-500/10 px-5 py-3 flex flex-col items-center justify-center min-w-[110px]">
-                                    <span className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">Problems</span>
-                                    <div className="flex items-center gap-1">
-                                        <span className="text-2xl font-black text-orange-500">{totalCount}</span>
-                                        <Code2 className="size-5 text-orange-500" />
-                                    </div>
-                                </Card>
-                            </div>
-                        </div>
-                    </div>
+                <div className="container mx-auto px-4 max-w-5xl animate-in fade-in duration-700">
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Main Content Area */}
-                        <div className="lg:col-span-9 space-y-6">
+                    <div className="space-y-6">
                             
                             {/* Topics Bar */}
                             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
@@ -296,83 +260,6 @@ export default function Home() {
                                 </Table>
                             </div>
                         </div>
-
-                        {/* Sidebar area */}
-                        <div className="lg:col-span-3 space-y-6">
-                            
-                            {/* Progress Card */}
-                            <Card className="border-border/40 shadow-xl overflow-hidden group">
-                                 <div className="h-1.5 w-full bg-muted">
-                                    <div className="h-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-1000" style={{ width: `${(solvedCount / totalCount) * 100 || 0}%` }} />
-                                 </div>
-                                <CardHeader className="pb-3 pt-6">
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-lg font-bold flex items-center">
-                                            <BarChart3 className="mr-2 size-4 text-primary" /> Progress
-                                        </CardTitle>
-                                        <Badge variant="secondary" className="bg-primary/5 text-[10px]">Rank: Beginner</Badge>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="space-y-6 pb-8">
-                                     <div className="grid grid-cols-3 gap-2 text-center">
-                                        <div className="space-y-1 p-2 bg-green-500/5 rounded-xl border border-green-500/10">
-                                            <div className="text-xs font-bold text-green-600 uppercase tracking-tighter">Easy</div>
-                                            <div className="text-lg font-black italic">{problems.filter(p => p.difficulty === 'Easy' && p.status === 'solved').length}</div>
-                                        </div>
-                                        <div className="space-y-1 p-2 bg-orange-500/5 rounded-xl border border-orange-500/10">
-                                            <div className="text-xs font-bold text-orange-600 uppercase tracking-tighter">Med</div>
-                                            <div className="text-lg font-black italic">{problems.filter(p => p.difficulty === 'Medium' && p.status === 'solved').length}</div>
-                                        </div>
-                                        <div className="space-y-1 p-2 bg-red-500/5 rounded-xl border border-red-500/10">
-                                            <div className="text-xs font-bold text-red-600 uppercase tracking-tighter">Hard</div>
-                                            <div className="text-lg font-black italic">{problems.filter(p => p.difficulty === 'Hard' && p.status === 'solved').length}</div>
-                                        </div>
-                                     </div>
-                                     
-                                     <div className="space-y-3">
-                                        <div className="flex justify-between text-xs font-bold uppercase text-muted-foreground tracking-widest">
-                                            <span>Goal Mastery</span>
-                                            <span className="text-primary italic">{solvedCount} / {totalCount}</span>
-                                        </div>
-                                        <div className="relative h-2 w-full bg-muted rounded-full">
-                                            <div className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${(solvedCount / totalCount) * 100 || 0}%` }} />
-                                        </div>
-                                     </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Quick Stats */}
-                            <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-lg">
-                                <CardHeader className="pb-4">
-                                    <CardTitle className="text-lg font-bold flex items-center">
-                                        <Trophy className="mr-2 size-4 text-yellow-500" /> Community
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-5">
-                                    {[
-                                        { name: "lwshakib", score: "2.5k", rank: 1 },
-                                        { name: "professor", score: "2.1k", rank: 2 },
-                                        { name: "antigravity", score: "1.8k", rank: 3 }
-                                    ].map((user) => (
-                                        <div key={user.name} className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-transform">
-                                            <div className="flex items-center gap-3">
-                                                <div className={cn(
-                                                    "size-7 rounded-full flex items-center justify-center text-[10px] font-black border-2",
-                                                    user.rank === 1 ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" :
-                                                    user.rank === 2 ? "bg-zinc-400/10 border-zinc-400/30 text-zinc-500" :
-                                                    "bg-orange-500/10 border-orange-500/30 text-orange-500"
-                                                )}>
-                                                    {user.rank}
-                                                </div>
-                                                <span className="text-sm font-bold group-hover:text-primary transition-colors">{user.name}</span>
-                                            </div>
-                                            <span className="font-mono text-sm font-bold text-muted-foreground">{user.score}</span>
-                                        </div>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
 
                     {/* Footer */}
                     <div className="mt-20 border-t border-border/40 pt-10 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 hover:opacity-100 transition-opacity">
