@@ -1,38 +1,58 @@
-import amqp from "amqplib";
+import amqp, { type Connection, type Channel } from "amqplib";
+import "dotenv/config";
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
+class RabbitMQService {
+  private connection: Connection | null = null;
+  private channel: Channel | null = null;
+  private url: string;
 
-let connection: amqp.Connection | null = null;
-let channel: amqp.Channel | null = null;
+  constructor() {
+    this.url = process.env.RABBITMQ_URL as string;
+    if (!this.url) {
+      throw new Error("❌ RABBITMQ_URL environment variable is missing.");
+    }
+  }
 
-export const connectRabbitMQ = async () => {
+  public async connect() {
     try {
-        connection = await amqp.connect(RABBITMQ_URL);
-        const ch = await connection.createChannel();
-        channel = ch;
-        console.log("Connected to RabbitMQ");
+      const connection: any = await amqp.connect(this.url);
+      const channel: any = await connection.createChannel();
+      console.log("Connected to RabbitMQ");
 
-        // Define queues
-        await ch.assertQueue("javascript_queue", { durable: true });
-        await ch.assertQueue("python_queue", { durable: true });
-        await ch.assertQueue("cpp_queue", { durable: true });
-        await ch.assertQueue("result_queue", { durable: true });
+      // Define queues
+      await channel.assertQueue("javascript_queue", { durable: true });
+      await channel.assertQueue("python_queue", { durable: true });
+      await channel.assertQueue("cpp_queue", { durable: true });
+      await channel.assertQueue("result_queue", { durable: true });
 
-        return { connection, channel };
+      this.connection = connection as Connection;
+      this.channel = channel as Channel;
+
+      return { connection: this.connection, channel: this.channel };
     } catch (error) {
-        console.error("Failed to connect to RabbitMQ:", error);
-        throw error;
+      console.error("Failed to connect to RabbitMQ:", error);
+      throw error;
     }
-};
+  }
 
-export const getChannel = () => {
-    if (!channel) {
-        throw new Error("RabbitMQ channel not initialized. Call connectRabbitMQ first.");
+  public getChannel(): Channel {
+    if (!this.channel) {
+      throw new Error("RabbitMQ channel not initialized. Call connect() first.");
     }
-    return channel;
-};
+    return this.channel;
+  }
 
-export const sendToQueue = async (queue: string, message: any) => {
-    const ch = getChannel();
+  public async sendToQueue(queue: string, message: any) {
+    const ch = this.getChannel();
     ch.sendToQueue(queue, Buffer.from(JSON.stringify(message)), { persistent: true });
-};
+  }
+
+  public async close() {
+    if (this.connection) {
+      await (this.connection as any).close();
+    }
+  }
+}
+
+export const rabbitmqService = new RabbitMQService();
+export default rabbitmqService;

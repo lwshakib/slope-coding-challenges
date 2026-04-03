@@ -1,6 +1,4 @@
 import type { Request, Response } from "express";
-import { prisma } from "../services/prisma.services";
-import { problemRegistry } from "../features/problems/problems.registry";
 
 export const getProfile = async (req: Request, res: Response) => {
     try {
