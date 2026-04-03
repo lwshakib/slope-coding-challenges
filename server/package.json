@@ -7,10 +7,12 @@
     "dev": "bun run --watch src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun --minify",
     "start": "bun run dist/index.js",
-    "ecs-setup": "bun run src/scripts/ecs-setup.ts",
-    "ecs-teardown": "bun run src/scripts/ecs-teardown.ts",
-    "postgres-setup": "bun run src/scripts/postgres-setup.ts",
-    "postgres-teardown": "bun run src/scripts/postgres-teardown.ts"
+    "ecs:setup": "bun run src/scripts/ecs-setup.ts",
+    "ecs:teardown": "bun run src/scripts/ecs-teardown.ts",
+    "postgres:setup": "bun run src/scripts/postgres-setup.ts",
+    "postgres:teardown": "bun run src/scripts/postgres-teardown.ts",
+    "infra:setup": "bun run postgres:setup && bun run ecs:setup",
+    "infra:teardown": "bun run ecs:teardown && bun run postgres:teardown"
   },
   "private": true,
   "devDependencies": {
