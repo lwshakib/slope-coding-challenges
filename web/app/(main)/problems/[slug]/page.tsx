@@ -681,7 +681,7 @@ export default function ProblemIDE() {
                             </SheetHeader>
                             <ScrollArea className="flex-1">
                                 <div className="flex flex-col p-2 gap-1">
-                                    {problemList.map(p => (
+                                    {problemList.map((p, index) => (
                                         <SheetClose key={p.id} asChild>
                                             <Link href={`/problems/${p.slug}`} className={cn(
                                                 "group flex items-start justify-between p-3 rounded-xl transition-all duration-200 border",
@@ -696,7 +696,7 @@ export default function ProblemIDE() {
                                                     )}>
                                                         {p.title}
                                                     </span>
-                                                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">#{p.id}</span>
+                                                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">#{index + 1}</span>
                                                 </div>
                                                 <Badge 
                                                     variant="outline"

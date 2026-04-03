@@ -189,7 +189,7 @@ export default function Home() {
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
-                                            filteredProblems.map((problem) => (
+                                            filteredProblems.map((problem, index) => (
                                                 <TableRow 
                                                     key={problem.id} 
                                                     className="hover:bg-primary/[0.03] transition-colors group cursor-pointer border-border/30 h-16"
@@ -218,7 +218,7 @@ export default function Home() {
                                                     <TableCell>
                                                         <Link href={`/problems/${problem.slug}`} className="flex flex-col">
                                                             <span className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
-                                                                {problem.id}. {problem.title}
+                                                                {index + 1}. {problem.title}
                                                             </span>
                                                             <div className="flex gap-2 mt-1">
                                                                 {problem.tags?.slice(0, 3).map(tag => (
