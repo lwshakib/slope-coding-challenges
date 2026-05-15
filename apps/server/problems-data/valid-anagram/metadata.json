@@ -1,0 +1,16 @@
+{
+  "id": "102",
+  "slug": "valid-anagram",
+  "title": "Valid Anagram",
+  "difficulty": "Easy",
+  "category": "String",
+  "tags": [
+    "String",
+    "Hash Table",
+    "Sorting"
+  ],
+  "acceptance": "63.7%",
+  "functionName": "isAnagram",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

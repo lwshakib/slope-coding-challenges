@@ -1,0 +1,11 @@
+{
+  "id": "1001",
+  "slug": "contest-unique-1",
+  "title": "Contest FizzBuzz",
+  "difficulty": "Easy",
+  "category": "Basic",
+  "tags": ["Basic", "Math"],
+  "acceptance": "100%",
+  "functionName": "fizzBuzz",
+  "isContestOnly": true
+}

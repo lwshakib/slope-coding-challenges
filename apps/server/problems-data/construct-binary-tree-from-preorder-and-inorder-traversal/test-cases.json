@@ -1,0 +1,12 @@
+[
+  {
+    "input": "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
+    "expectedOutput": "[3,9,20,null,null,15,7]",
+    "isPublic": true
+  },
+  {
+    "input": "preorder = [-1], inorder = [-1]",
+    "expectedOutput": "[-1]",
+    "isPublic": true
+  }
+]

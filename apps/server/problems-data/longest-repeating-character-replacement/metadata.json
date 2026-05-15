@@ -1,0 +1,16 @@
+{
+  "id": "111",
+  "slug": "longest-repeating-character-replacement",
+  "title": "Longest Repeating Character Replacement",
+  "difficulty": "Medium",
+  "category": "String",
+  "tags": [
+    "String",
+    "Sliding Window",
+    "Hash Table"
+  ],
+  "acceptance": "51.8%",
+  "functionName": "characterReplacement",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

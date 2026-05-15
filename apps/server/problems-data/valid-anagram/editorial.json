@@ -1,0 +1,8 @@
+{
+  "approach": "We can use a frequency map (or an array of size 26 for lowercase English letters) to count the occurrences of each character in both strings. First, check if lengths are equal. If not, return false. Then, increment counts for string s and decrement for string t. Finally, check if all counts are zero.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {string} s\n * @param {string} t\n * @return {boolean}\n */\nvar isAnagram = function(s, t) {\n    if (s.length !== t.length) return false;\n    const count = new Array(26).fill(0);\n    for (let i = 0; i < s.length; i++) {\n        count[s.charCodeAt(i) - 97]++;\n        count[t.charCodeAt(i) - 97]--;\n    }\n    return count.every(c => c === 0);\n};",
+    "python": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        if len(s) != len(t):\n            return False\n        countS, countT = {}, {}\n        for i in range(len(s)):\n            countS[s[i]] = countS.get(s[i], 0) + 1\n            countT[t[i]] = countT.get(t[i], 0) + 1\n        return countS == countT",
+    "cpp": "class Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        if (s.length() != t.length()) return false;\n        vector<int> count(26, 0);\n        for (int i = 0; i < s.length(); i++) {\n            count[s[i] - 'a']++;\n            count[t[i] - 'a']--;\n        }\n        for (int c : count) {\n            if (c != 0) return false;\n        }\n        return true;\n    }\n};"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "121",
+  "slug": "maximum-depth-of-binary-tree",
+  "title": "Maximum Depth of Binary Tree",
+  "difficulty": "Easy",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Binary Tree"
+  ],
+  "acceptance": "73.9%",
+  "functionName": "maxDepth",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

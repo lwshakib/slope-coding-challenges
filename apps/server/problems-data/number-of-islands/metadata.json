@@ -1,0 +1,18 @@
+{
+  "id": "138",
+  "slug": "number-of-islands",
+  "title": "Number of Islands",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Array",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Matrix"
+  ],
+  "acceptance": "56.4%",
+  "functionName": "numIslands",
+  "timeComplexity": "O(m * n)",
+  "spaceComplexity": "O(m * n)"
+}

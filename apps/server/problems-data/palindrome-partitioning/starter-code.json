@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {string} s\n * @return {string[][]}\n */\nvar partition = function(s) {\n    \n};",
+  "python": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        ",
+  "cpp": "class Solution {\npublic:\n    vector<vector<string>> partition(string s) {\n        \n    }\n};"
+}

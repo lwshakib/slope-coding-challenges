@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar countComponents = function(n, edges) {\n    \n};",
+  "python": "class Solution:\n    def countComponents(self, n: int, edges: List[List[int]]) -> int:\n        ",
+  "cpp": "class Solution {\npublic:\n    int countComponents(int n, vector<vector<int>>& edges) {\n        \n    }\n};"
+}

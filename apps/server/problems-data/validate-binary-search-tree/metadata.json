@@ -1,0 +1,17 @@
+{
+  "id": "126",
+  "slug": "validate-binary-search-tree",
+  "title": "Validate Binary Search Tree",
+  "difficulty": "Medium",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Binary Search Tree",
+    "Binary Tree"
+  ],
+  "acceptance": "32.1%",
+  "functionName": "isValidBST",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

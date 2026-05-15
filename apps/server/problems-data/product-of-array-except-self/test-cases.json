@@ -1,0 +1,12 @@
+[
+  {
+    "input": "nums = [1,2,3,4]",
+    "expectedOutput": "[24,12,8,6]",
+    "isPublic": true
+  },
+  {
+    "input": "nums = [-1,1,0,-3,3]",
+    "expectedOutput": "[0,0,9,0,0]",
+    "isPublic": true
+  }
+]

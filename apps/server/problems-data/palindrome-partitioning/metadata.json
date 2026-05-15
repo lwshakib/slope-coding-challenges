@@ -1,0 +1,16 @@
+{
+  "id": "152",
+  "slug": "palindrome-partitioning",
+  "title": "Palindrome Partitioning",
+  "difficulty": "Medium",
+  "category": "Backtracking",
+  "tags": [
+    "String",
+    "Dynamic Programming",
+    "Backtracking"
+  ],
+  "acceptance": "62.4%",
+  "functionName": "partition",
+  "timeComplexity": "O(n * 2^n)",
+  "spaceComplexity": "O(n)"
+}

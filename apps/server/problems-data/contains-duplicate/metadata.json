@@ -1,0 +1,16 @@
+{
+  "id": "101",
+  "slug": "contains-duplicate",
+  "title": "Contains Duplicate",
+  "difficulty": "Easy",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Sorting"
+  ],
+  "acceptance": "65.2%",
+  "functionName": "containsDuplicate",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

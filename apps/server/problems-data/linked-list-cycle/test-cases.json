@@ -1,0 +1,17 @@
+[
+  {
+    "input": "head = [3,2,0,-4], pos = 1",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "head = [1,2], pos = 0",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "head = [1], pos = -1",
+    "expectedOutput": "false",
+    "isPublic": true
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "id": "143",
+  "slug": "surrounded-regions",
+  "title": "Surrounded Regions",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Array",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Matrix"
+  ],
+  "acceptance": "37.5%",
+  "functionName": "solve",
+  "timeComplexity": "O(m * n)",
+  "spaceComplexity": "O(m * n)"
+}

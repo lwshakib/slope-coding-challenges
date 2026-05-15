@@ -1,0 +1,8 @@
+{
+  "approach": "Dynamic Programming. At each house, we can either rob it (current money + max from 2 houses ago) or skip it (max from previous house). Max money at house i = max(rob i, skip i).",
+  "solutionCode": {
+    "javascript": "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar rob = function(nums) {\n    let rob1 = 0, rob2 = 0;\n    for (const n of nums) {\n        const temp = Math.max(n + rob1, rob2);\n        rob1 = rob2;\n        rob2 = temp;\n    }\n    return rob2;\n};",
+    "python": "class Solution:\n    def rob(self, nums: List[int]) -> int:\n        rob1, rob2 = 0, 0\n        \n        for n in nums:\n            temp = max(n + rob1, rob2)\n            rob1 = rob2\n            rob2 = temp\n        return rob2",
+    "cpp": "class Solution {\npublic:\n    int rob(vector<int>& nums) {\n        int rob1 = 0, rob2 = 0;\n        for (int n : nums) {\n            int temp = max(n + rob1, rob2);\n            rob1 = rob2;\n            rob2 = temp;\n        }\n        return rob2;\n    }\n};"
+  }
+}

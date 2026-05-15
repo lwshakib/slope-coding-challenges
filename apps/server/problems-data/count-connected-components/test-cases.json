@@ -1,0 +1,12 @@
+[
+  {
+    "input": "n = 5, edges = [[0,1],[1,2],[3,4]]",
+    "expectedOutput": "2",
+    "isPublic": true
+  },
+  {
+    "input": "n = 5, edges = [[0,1],[1,2],[2,3],[3,4]]",
+    "expectedOutput": "1",
+    "isPublic": true
+  }
+]

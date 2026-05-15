@@ -1,0 +1,16 @@
+{
+  "id": "109",
+  "slug": "container-with-most-water",
+  "title": "Container With Most Water",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Two Pointers",
+    "Greedy"
+  ],
+  "acceptance": "54.0%",
+  "functionName": "maxArea",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

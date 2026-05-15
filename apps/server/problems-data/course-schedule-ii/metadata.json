@@ -1,0 +1,17 @@
+{
+  "id": "146",
+  "slug": "course-schedule-ii",
+  "title": "Course Schedule II",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Graph",
+    "Topological Sort"
+  ],
+  "acceptance": "49.6%",
+  "functionName": "findOrder",
+  "timeComplexity": "O(V + E)",
+  "spaceComplexity": "O(V + E)"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "input": "s = \"ABAB\", k = 2",
+    "expectedOutput": "4",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"AABABBA\", k = 1",
+    "expectedOutput": "4",
+    "isPublic": true
+  }
+]

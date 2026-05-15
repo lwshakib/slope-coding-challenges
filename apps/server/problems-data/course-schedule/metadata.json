@@ -1,0 +1,17 @@
+{
+  "id": "145",
+  "slug": "course-schedule",
+  "title": "Course Schedule",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Graph",
+    "Topological Sort"
+  ],
+  "acceptance": "46.3%",
+  "functionName": "canFinish",
+  "timeComplexity": "O(V + E)",
+  "spaceComplexity": "O(V + E)"
+}

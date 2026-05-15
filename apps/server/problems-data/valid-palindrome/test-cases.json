@@ -1,0 +1,17 @@
+[
+  {
+    "input": "s = \"A man, a plan, a canal: Panama\"",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"race a car\"",
+    "expectedOutput": "false",
+    "isPublic": true
+  },
+  {
+    "input": "s = \" \"",
+    "expectedOutput": "true",
+    "isPublic": true
+  }
+]

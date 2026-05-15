@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar trap = function(height) {\n    \n};",
+  "python": "class Solution:\n    def trap(self, height: List[int]) -> int:\n        pass",
+  "cpp": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n        \n    }\n};"
+}

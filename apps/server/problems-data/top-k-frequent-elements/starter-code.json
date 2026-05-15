@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number[]}\n */\nvar topKFrequent = function(nums, k) {\n    \n};",
+  "python": "class Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        ",
+  "cpp": "class Solution {\npublic:\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        \n    }\n};"
+}

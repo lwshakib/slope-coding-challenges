@@ -1,0 +1,17 @@
+{
+  "id": "149",
+  "slug": "count-connected-components",
+  "title": "Number of Connected Components in an Undirected Graph",
+  "difficulty": "Medium",
+  "category": "Graph",
+  "tags": [
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Union Find",
+    "Graph"
+  ],
+  "acceptance": "59.4%",
+  "functionName": "countComponents",
+  "timeComplexity": "O(V + E)",
+  "spaceComplexity": "O(V + E)"
+}

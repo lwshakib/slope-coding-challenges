@@ -1,0 +1,11 @@
+{
+  "id": "1002",
+  "slug": "contest-unique-2",
+  "title": "Contest Sum of Squares",
+  "difficulty": "Easy",
+  "category": "Math",
+  "tags": ["Math"],
+  "acceptance": "100%",
+  "functionName": "sumOfSquares",
+  "isContestOnly": true
+}

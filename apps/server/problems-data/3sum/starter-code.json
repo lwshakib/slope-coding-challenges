@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} nums\n * @return {number[][]}\n */\nvar threeSum = function(nums) {\n    \n};",
+  "python": "class Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        ",
+  "cpp": "class Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        \n    }\n};"
+}

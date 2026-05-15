@@ -1,0 +1,8 @@
+{
+  "approach": "Greedy approach. Sort intervals by end time. Always pick the interval that ends earliest (to leave maximum room for future intervals). If next interval overlaps with current end, remove it (increment count). Else, update current end.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {number[][]} intervals\n * @return {number}\n */\nvar eraseOverlapIntervals = function(intervals) {\n    if (intervals.length === 0) return 0;\n    intervals.sort((a, b) => a[1] - b[1]);\n    let end = intervals[0][1];\n    let count = 0;\n    for (let i = 1; i < intervals.length; i++) {\n        if (intervals[i][0] < end) count++;\n        else end = intervals[i][1];\n    }\n    return count;\n};",
+    "python": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        intervals.sort(key = lambda i : i[1])\n        res = 0\n        prevEnd = intervals[0][1]\n        for start, end in intervals[1:]:\n            if start >= prevEnd:\n                prevEnd = end\n            else:\n                res += 1\n        return res",
+    "cpp": "class Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.empty()) return 0;\n        sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {\n            return a[1] < b[1];\n        });\n        int end = intervals[0][1];\n        int count = 0;\n        for (int i = 1; i < intervals.size(); i++) {\n            if (intervals[i][0] < end) count++;\n            else end = intervals[i][1];\n        }\n        return count;\n    }\n};"
+  }
+}

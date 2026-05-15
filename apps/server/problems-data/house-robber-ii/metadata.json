@@ -1,0 +1,15 @@
+{
+  "id": "151",
+  "slug": "house-robber-ii",
+  "title": "House Robber II",
+  "difficulty": "Medium",
+  "category": "Dynamic Programming",
+  "tags": [
+    "Array",
+    "Dynamic Programming"
+  ],
+  "acceptance": "40.9%",
+  "functionName": "rob",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

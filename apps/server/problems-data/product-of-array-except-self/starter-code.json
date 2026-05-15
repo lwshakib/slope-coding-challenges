@@ -1,0 +1,5 @@
+{
+  "javascript": "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar productExceptSelf = function(nums) {\n    \n};",
+  "python": "class Solution:\n    def productExceptSelf(self, nums: List[int]) -> List[int]:\n        ",
+  "cpp": "class Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n        \n    }\n};"
+}

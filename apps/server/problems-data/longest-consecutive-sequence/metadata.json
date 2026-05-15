@@ -1,0 +1,16 @@
+{
+  "id": "106",
+  "slug": "longest-consecutive-sequence",
+  "title": "Longest Consecutive Sequence",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Union Find"
+  ],
+  "acceptance": "48.2%",
+  "functionName": "longestConsecutive",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

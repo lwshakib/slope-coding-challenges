@@ -1,0 +1,12 @@
+[
+  {
+    "input": "root = [3,1,4,null,2], k = 1",
+    "expectedOutput": "1",
+    "isPublic": true
+  },
+  {
+    "input": "root = [5,3,6,2,4,null,null,1], k = 3",
+    "expectedOutput": "3",
+    "isPublic": true
+  }
+]

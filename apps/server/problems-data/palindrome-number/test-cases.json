@@ -1,0 +1,17 @@
+[
+  {
+    "input": "x = 121",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "x = -121",
+    "expectedOutput": "false",
+    "isPublic": true
+  },
+  {
+    "input": "x = 10",
+    "expectedOutput": "false",
+    "isPublic": true
+  }
+]

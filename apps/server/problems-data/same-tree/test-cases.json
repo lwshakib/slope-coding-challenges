@@ -1,0 +1,17 @@
+[
+  {
+    "input": "p = [1,2,3], q = [1,2,3]",
+    "expectedOutput": "true",
+    "isPublic": true
+  },
+  {
+    "input": "p = [1,2], q = [1,null,2]",
+    "expectedOutput": "false",
+    "isPublic": true
+  },
+  {
+    "input": "p = [1,2,1], q = [1,1,2]",
+    "expectedOutput": "false",
+    "isPublic": true
+  }
+]

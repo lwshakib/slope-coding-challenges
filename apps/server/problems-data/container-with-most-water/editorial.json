@@ -1,0 +1,8 @@
+{
+  "approach": "We use a two-pointer approach, starting at both ends of the array. The area is determined by the shorter line and the distance between the lines. To potentially find a larger area, we should move the pointer pointing to the shorter line inwards.",
+  "solutionCode": {
+    "javascript": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    let l = 0, r = height.length - 1;\n    let res = 0;\n    while (l < r) {\n        const area = (r - l) * Math.min(height[l], height[r]);\n        res = Math.max(res, area);\n        if (height[l] < height[r]) l++;\n        else r--;\n    }\n    return res;\n};",
+    "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        l, r = 0, len(height) - 1\n        res = 0\n        while l < r:\n            res = max(res, min(height[l], height[r]) * (r - l))\n            if height[l] < height[r]:\n                l += 1\n            elif height[r] <= height[l]:\n                r -= 1\n        return res",
+    "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int l = 0, r = height.size() - 1;\n        int res = 0;\n        while (l < r) {\n            int area = (r - l) * min(height[l], height[r]);\n            res = max(res, area);\n            if (height[l] < height[r]) l++;\n            else r--;\n        }\n        return res;\n    }\n};"
+  }
+}

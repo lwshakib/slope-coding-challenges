@@ -1,0 +1,17 @@
+[
+  {
+    "input": "head = [1,2,3,4,5], n = 2",
+    "expectedOutput": "[1,2,3,5]",
+    "isPublic": true
+  },
+  {
+    "input": "head = [1], n = 1",
+    "expectedOutput": "[]",
+    "isPublic": true
+  },
+  {
+    "input": "head = [1,2], n = 1",
+    "expectedOutput": "[1]",
+    "isPublic": true
+  }
+]

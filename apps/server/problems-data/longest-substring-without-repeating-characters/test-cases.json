@@ -1,0 +1,17 @@
+[
+  {
+    "input": "s = \"abcabcbb\"",
+    "expectedOutput": "3",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"bbbbb\"",
+    "expectedOutput": "1",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"pwwkew\"",
+    "expectedOutput": "3",
+    "isPublic": true
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "id": "107",
+  "slug": "valid-palindrome",
+  "title": "Valid Palindrome",
+  "difficulty": "Easy",
+  "category": "String",
+  "tags": [
+    "Two Pointers",
+    "String"
+  ],
+  "acceptance": "44.6%",
+  "functionName": "isPalindrome",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

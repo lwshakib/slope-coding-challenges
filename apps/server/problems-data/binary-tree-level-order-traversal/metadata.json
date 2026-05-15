@@ -1,0 +1,16 @@
+{
+  "id": "125",
+  "slug": "binary-tree-level-order-traversal",
+  "title": "Binary Tree Level Order Traversal",
+  "difficulty": "Medium",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Breadth-First Search",
+    "Binary Tree"
+  ],
+  "acceptance": "63.9%",
+  "functionName": "levelOrder",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

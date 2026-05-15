@@ -1,0 +1,12 @@
+[
+  {
+    "input": "s = \"aab\"",
+    "expectedOutput": "[[\"a\",\"a\",\"b\"],[\"aa\",\"b\"]]",
+    "isPublic": true
+  },
+  {
+    "input": "s = \"a\"",
+    "expectedOutput": "[[\"a\"]]",
+    "isPublic": true
+  }
+]

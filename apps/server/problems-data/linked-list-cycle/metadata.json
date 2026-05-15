@@ -1,0 +1,16 @@
+{
+  "id": "119",
+  "slug": "linked-list-cycle",
+  "title": "Linked List Cycle",
+  "difficulty": "Easy",
+  "category": "Linked List",
+  "tags": [
+    "Linked List",
+    "Two Pointers",
+    "Hash Table"
+  ],
+  "acceptance": "48.2%",
+  "functionName": "hasCycle",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(1)"
+}

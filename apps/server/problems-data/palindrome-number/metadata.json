@@ -1,0 +1,12 @@
+{
+  "id": "5",
+  "slug": "palindrome-number",
+  "title": "Palindrome Number",
+  "difficulty": "Easy",
+  "category": "Math",
+  "tags": ["Math"],
+  "acceptance": "53.9%",
+  "functionName": "isPalindrome",
+  "timeComplexity": "O(log10(n))",
+  "spaceComplexity": "O(1)"
+}

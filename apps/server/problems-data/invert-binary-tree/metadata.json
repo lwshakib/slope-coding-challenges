@@ -1,0 +1,17 @@
+{
+  "id": "120",
+  "slug": "invert-binary-tree",
+  "title": "Invert Binary Tree",
+  "difficulty": "Easy",
+  "category": "Tree",
+  "tags": [
+    "Tree",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Binary Tree"
+  ],
+  "acceptance": "75.4%",
+  "functionName": "invertTree",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}

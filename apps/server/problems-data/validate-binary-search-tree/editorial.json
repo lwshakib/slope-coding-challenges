@@ -1,0 +1,8 @@
+{
+  "approach": "We use DFS (Recursive) and keep track of the valid range (min, max) for each node. Left child must be smaller than current node (set new max), Right child must be larger than current node (set new min).",
+  "solutionCode": {
+    "javascript": "/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nvar isValidBST = function(root) {\n    function valid(node, left, right) {\n        if (!node) return true;\n        if (!(node.val < right && node.val > left)) return false;\n        return valid(node.left, left, node.val) && valid(node.right, node.val, right);\n    }\n    return valid(root, -Infinity, Infinity);\n};",
+    "python": "class Solution:\n    def isValidBST(self, root: Optional[TreeNode]) -> bool:\n        def valid(node, left, right):\n            if not node:\n                return True\n            if not (node.val < right and node.val > left):\n                return False\n            return valid(node.left, left, node.val) and valid(node.right, node.val, right)\n        return valid(root, float(\"-inf\"), float(\"inf\"))",
+    "cpp": "class Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        return valid(root, LONG_MIN, LONG_MAX);\n    }\n    bool valid(TreeNode* node, long left, long right) {\n        if (!node) return true;\n        if (!(node->val < right && node->val > left)) return false;\n        return valid(node->left, left, node->val) && valid(node->right, node->val, right);\n    }\n};"
+  }
+}

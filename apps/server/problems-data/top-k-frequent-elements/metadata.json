@@ -1,0 +1,19 @@
+{
+  "id": "104",
+  "slug": "top-k-frequent-elements",
+  "title": "Top K Frequent Elements",
+  "difficulty": "Medium",
+  "category": "Array",
+  "tags": [
+    "Array",
+    "Hash Table",
+    "Divide and Conquer",
+    "Sorting",
+    "Heap (Priority Queue)",
+    "Bucket Sort"
+  ],
+  "acceptance": "62.5%",
+  "functionName": "topKFrequent",
+  "timeComplexity": "O(n)",
+  "spaceComplexity": "O(n)"
+}
