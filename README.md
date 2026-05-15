@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="apps/web/public/logos/logo.svg" width="120" alt="Slope Logo" />
+</p>
+
 # Slope Coding Challenges
 
 Slope Coding Challenges is a high-performance, full-stack platform designed for solving algorithmic problems, similar to LeetCode. It features a modern Next.js frontend, a robust Express backend, and an asynchronous code execution worker powered by RabbitMQ.
@@ -9,6 +13,21 @@ Slope Coding Challenges is a high-performance, full-stack platform designed for 
 - **Asynchronous Execution**: Reliable code execution using RabbitMQ and dedicated workers.
 - **Modern UI**: Sleek, responsive design built with shadcn/ui and TailwindCSS.
 - **Monorepo Architecture**: Clean separation of concerns using Turborepo and pnpm workspaces.
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User([User]) <--> Web[Next.js Frontend]
+    Web <--> API[Express API]
+    API <--> DB[(PostgreSQL)]
+    API -- Enqueue Job --> MQ{RabbitMQ}
+    MQ -- Dequeue Job --> Worker[Execution Worker]
+    Worker -- Execute Code --> Runtimes[Isolated Runtimes]
+    Runtimes -- Return Result --> Worker
+    Worker -- Push Result --> MQ
+    MQ -- Result Notification --> API
+```
 
 ## 🛠️ Tech Stack
 
@@ -73,6 +92,25 @@ Slope uses a hybrid architecture for a premium developer experience. The UI and 
    - API: [http://localhost:8000](http://localhost:8000)
 
    *Note: The server automatically initializes the database schema on first startup.*
+
+## 📱 App Demos
+
+<div align="center">
+  <table border="0">
+    <tr>
+      <td><img src="apps/web/public/app_demos/01.png" width="400" alt="Demo 1" /></td>
+      <td><img src="apps/web/public/app_demos/02.png" width="400" alt="Demo 2" /></td>
+    </tr>
+    <tr>
+      <td><img src="apps/web/public/app_demos/03.png" width="400" alt="Demo 3" /></td>
+      <td><img src="apps/web/public/app_demos/04.png" width="400" alt="Demo 4" /></td>
+    </tr>
+    <tr>
+      <td><img src="apps/web/public/app_demos/05.png" width="400" alt="Demo 5" /></td>
+      <td><img src="apps/web/public/app_demos/06.png" width="400" alt="Demo 6" /></td>
+    </tr>
+  </table>
+</div>
 
 ## 🤝 Contributing
 
