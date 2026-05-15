@@ -1,5 +1,0 @@
-{
-  "javascript": "/**\n * @param {string} s\n * @param {number} k\n * @return {number}\n */\nvar characterReplacement = function(s, k) {\n    \n};",
-  "python": "class Solution:\n    def characterReplacement(self, s: str, k: int) -> int:\n        ",
-  "cpp": "class Solution {\npublic:\n    int characterReplacement(string s, int k) {\n        \n    }\n};"
-}

@@ -1,5 +1,0 @@
-{
-  "javascript": "/**\n * @param {number[]} height\n * @return {number}\n */\nvar maxArea = function(height) {\n    \n};",
-  "python": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        ",
-  "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        \n    }\n};"
-}

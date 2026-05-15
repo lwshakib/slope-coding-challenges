@@ -1,121 +1,83 @@
-# <img src="web/public/logo.svg" alt="Slope Logo" width="32" height="32" style="vertical-align: middle;" /> Slope - Distributed Coding Challenges Platform
+# Slope Coding Challenges
 
-[![Developed by](https://img.shields.io/badge/Developed%20by-lwshakib-blueviolet?style=for-the-badge&logo=github)](https://github.com/lwshakib)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+Slope Coding Challenges is a high-performance, full-stack platform designed for solving algorithmic problems, similar to LeetCode. It features a modern Next.js frontend, a robust Express backend, and an asynchronous code execution worker powered by RabbitMQ.
 
-**Slope** is a modern, high-performance platform for mastering algorithms and data structures. It combines a beautiful, developer-centric frontend with a robust, distributed backend capable of securely executing code in multiple languages.
+## 🚀 Features
 
-<br />
+- **Problem Registry**: 50+ pre-defined algorithmic problems covering various data structures and algorithms.
+- **Interactive Code Editor**: Real-time code editing with syntax highlighting (C++, Python, JavaScript).
+- **Asynchronous Execution**: Reliable code execution using RabbitMQ and dedicated workers.
+- **Modern UI**: Sleek, responsive design built with shadcn/ui and TailwindCSS.
+- **Monorepo Architecture**: Clean separation of concerns using Turborepo and pnpm workspaces.
 
-<div align="center">
-  <img src="web/public/light.png" alt="Slope Light Mode" width="45%" />
-  &nbsp;
-  <img src="web/public/dark.png" alt="Slope Dark Mode" width="45%" />
-</div>
+## 🛠️ Tech Stack
 
-<br />
+- **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/), [TailwindCSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+- **Backend**: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **Message Queue**: [RabbitMQ](https://www.rabbitmq.com/)
+- **Monorepo**: [Turborepo](https://turbo.build/), [pnpm](https://pnpm.io/)
 
----
+## 📦 Project Structure
 
-## 🏗️ System Architecture
-
-Slope is built as a distributed system to ensure scalability and security:
-
-```mermaid
-graph TD
-    User[User / Web Client] -->|HTTP/REST| API[API Server]
-    API -->|Submit Job| Queue[RabbitMQ]
-    API -->|Read/Write| DB[(PostgreSQL)]
-    Queue -->|Consume| Worker[Worker Service]
-    Worker -->|Spin up| Container[Runtime Containers]
-    Container -->|Result| Worker
-    Worker -->|Update| DB
+```text
+slope-coding-challenges/
+├── apps/
+│   ├── server/       # Express API & Code Execution Worker
+│   └── web/          # Next.js Frontend
+├── packages/
+│   ├── ui/           # Shared UI components
+│   ├── eslint-config/# Shared ESLint configuration
+│   └── typescript-config/ # Shared TypeScript configuration
+└── docker-compose.yml# Docker services for local development
 ```
 
-### Core Components
-
-1.  **[Web (`/web`)](./web/README.md)**: The Next.js frontend. Features a rich IDE, dashboards, and detailed analytics.
-2.  **[Slope Server (`/server`)](./server/README.md)**: The Node.js/Bun backend. Handles auth, problem management, and acts as the API gateway.
-3.  **Workers & Runtimes (`/containers`)**:
-    -   **Worker System**: Consumes submission jobs from RabbitMQ.
-    -   **[Javascript Runtime](./containers/javascript-runtime/README.md)**: Isolated Docker environment for JS execution.
-    -   **[Python Runtime](./containers/python-runtime/README.md)**: Isolated Docker environment for Python execution.
-    -   **[C++ Runtime](./containers/cpp-runtime/README.md)**: Isolated Docker environment for C++ compilation and execution.
-
----
-
-## 🛠️ Technology Stack
-
--   **Frontend**: Next.js 16, Tailwind CSS v4, Shadcn/UI, Zustand.
--   **Backend**: Bun, Express.js, Prisma ORM.
--   **Infrastructure**: Docker, RabbitMQ, PostgreSQL.
--   **Languages Supported**: JavaScript, Python, C++.
-
----
-
-## 🚀 Getting Started
+## 🚦 Getting Started
 
 ### Prerequisites
 
--   [Docker](https://www.docker.com/) & Docker Compose
--   [Bun](https://bun.sh/) (v1.0+)
+- Node.js (>=20)
+- pnpm (>=9)
+- Docker & Docker Compose (Required for background infrastructure and secure code runtimes)
 
-### 1. Clone the Repository
+### Local Setup (Hybrid Architecture)
 
-```bash
-git clone https://github.com/lwshakib/slope-coding-challenges.git
-cd slope-coding-challenges
-```
+Slope uses a hybrid architecture for a premium developer experience. The UI and API run locally for instant feedback, while the database, queue, and runtimes run in Docker.
 
-### 2. Start Infrastructure Services
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/slope-coding-challenges.git
+   cd slope-coding-challenges
+   ```
 
-Use Docker Compose to spin up the database and message queue.
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
 
-```bash
-docker-compose up -d postgres rabbitmq
-```
+3. **Configure Environment Variables**:
+   - Create a `.env` file in `apps/server` based on `apps/server/.env.example`.
+   - Ensure `DATABASE_URL` and `RABBITMQ_URL` are correctly set.
 
-### 3. Setup the Server
+4. **Boot Background Containers (Docker)**:
+   This will boot PostgreSQL, RabbitMQ, and the isolated execution workers.
+   ```bash
+   docker-compose up -d --build
+   ```
 
-Navigate to the server directory, install dependencies, and migrate the database.
+5. **Start Development Servers (Locally)**:
+   ```bash
+   pnpm dev
+   ```
+   - Frontend: [http://localhost:3000](http://localhost:3000)
+   - API: [http://localhost:8000](http://localhost:8000)
 
-```bash
-cd server
-bun install
-cp .env.example .env # Configure your DB/RabbitMQ creds
-bun run db:migrate
-
-bun dev
-```
-
-### 4. Setup the Frontend
-
-In a new terminal, navigate to the web client directory.
-
-```bash
-cd web
-bun install
-bun dev
-```
-
-Access the app at `http://localhost:3000`.
-
----
+   *Note: The server automatically initializes the database schema on first startup.*
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build the runtimes locally.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## 📜 License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**lwshakib**
-
--   GitHub: [@lwshakib](https://github.com/lwshakib)
-
----
-
-> "Smooth progress on the steepest slopes." 🏔️

@@ -1,25 +1,52 @@
-name: slope
-version: "3.8"
-
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: slope-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: slope
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    restart: unless-stopped
+    container_name: slope-rabbitmq
     ports:
-      - "5672:5672"   # RabbitMQ port
-      - "15672:15672" # Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+
+  cpp-runtime:
+    build:
+      context: ./apps/cpp-runtime
+    container_name: slope-cpp-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  python-runtime:
+    build:
+      context: ./apps/python-runtime
+    container_name: slope-python-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  javascript-runtime:
+    build:
+      context: ./apps/javascript-runtime
+    container_name: slope-javascript-runtime
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
 
 volumes:
-  redis_data:
-
-networks:
-  default:
-    name: app-network
+  postgres_data:

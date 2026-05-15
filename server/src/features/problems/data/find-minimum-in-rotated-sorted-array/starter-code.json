@@ -1,5 +1,0 @@
-{
-  "javascript": "/**\n * @param {number[]} nums\n * @return {number}\n */\nvar findMin = function(nums) {\n    \n};",
-  "python": "class Solution:\n    def findMin(self, nums: List[int]) -> int:\n        ",
-  "cpp": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n        \n    }\n};"
-}
