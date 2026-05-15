@@ -1,0 +1,21 @@
+{
+  "name": "javascript-runtime",
+  "version": "1.0.0",
+  "description": "JavaScript Code Execution Runtime",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/node": "^25.1.0",
+    "tsc-watch": "^7.2.0"
+  }
+}
