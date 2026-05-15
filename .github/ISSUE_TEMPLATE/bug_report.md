@@ -1,49 +1,32 @@
 ---
-name: 🐛 Bug Report
-about: Create a report to help us improve Slope
+name: Bug Report
+about: Create a report to help us improve
 title: "[BUG] "
-labels: ["bug"]
-assignees: []
+labels: bug
+assignees: ''
+
 ---
 
-## 🐛 Bug Description
+**Describe the bug**
+A clear and concise description of what the bug is.
 
-<!-- A clear and concise description of what the bug is. -->
-
-## 🛠️ Feature Area
-
-- [ ] Web Frontend (`/web`)
-- [ ] API Server (`/server`)
-- [ ] Database (Prisma/PostgreSQL)
-- [ ] Message Queue (RabbitMQ)
-- [ ] Code Runtimes (C++, JS, Python)
-- [ ] Worker System
-- [ ] Authentication (Better Auth)
-- [ ] Other: **__**
-
-## 🔁 Reproduction Steps
-
-<!-- Steps to reproduce the behavior:
+**To Reproduce**
+Steps to reproduce the behavior:
 1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
+2. Click on '....'
+3. Scroll down to '....'
 4. See error
--->
 
-## 🧐 Expected Behavior
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
-<!-- A clear and concise description of what you expected to happen. -->
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
 
-## 📸 Screenshots
+**Desktop (please complete the following information):**
+ - OS: [e.g. iOS]
+ - Browser [e.g. chrome, safari]
+ - Version [e.g. 22]
 
-<!-- If applicable, add screenshots to help explain your problem. -->
-
-## 💻 Environment
-
-- **OS:** [e.g. Windows 11, macOS Sequoia]
-- **Browser:** [e.g. Chrome 120, Safari 17]
-- **Version:** [e.g. v0.1.0]
-
-## 📋 Additional Context
-
-<!-- Add any other context about the problem here (e.g. console logs, AI response IDs). -->
+**Additional context**
+Add any other context about the problem here.
