@@ -3,23 +3,23 @@
  * Initializes the 'slope' database schema.
  */
 
-import pg from "pg";
-import { DATABASE_URL } from "../env.js";
-import logger from "../logger/winston.logger.js";
+import pg from "pg"
+import { DATABASE_URL } from "../env.js"
+import logger from "../logger/winston.logger.js"
 
 export async function setupPostgres() {
-  const connectionString = DATABASE_URL;
+  const connectionString = DATABASE_URL
 
   if (!connectionString) {
-    logger.error("❌ DATABASE_URL is not set.");
-    return;
+    logger.error("❌ DATABASE_URL is not set.")
+    return
   }
 
-  const client = new pg.Client({ connectionString });
-  
+  const client = new pg.Client({ connectionString })
+
   try {
-    await client.connect();
-    logger.info("🚀 Checking Slope PostgreSQL schema...");
+    await client.connect()
+    logger.info("🚀 Checking Slope PostgreSQL schema...")
 
     const queries = [
       // 1. Community Solution
@@ -117,16 +117,16 @@ export async function setupPostgres() {
         "userId" TEXT NOT NULL,
         "currentOrder" INT NOT NULL,
         PRIMARY KEY ("contestId", "userId")
-      );`
-    ];
+      );`,
+    ]
 
     for (const query of queries) {
-      await client.query(query);
+      await client.query(query)
     }
-    logger.info("✅ PostgreSQL schema is ready.");
+    logger.info("✅ PostgreSQL schema is ready.")
   } catch (error) {
-    logger.error("❌ PostgreSQL setup failed:", error);
+    logger.error("❌ PostgreSQL setup failed:", error)
   } finally {
-    await client.end();
+    await client.end()
   }
 }

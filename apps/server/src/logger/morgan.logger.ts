@@ -1,16 +1,16 @@
-import morgan, { type StreamOptions } from "morgan";
-import logger from "./winston.logger.js";
+import morgan, { type StreamOptions } from "morgan"
+import logger from "./winston.logger.js"
 
 const stream: StreamOptions = {
   write: (message: string): void => {
-    logger.http(message.trim());
+    logger.http(message.trim())
   },
-};
+}
 
 const skip = (): boolean => {
-  const env = process.env.NODE_ENV ?? "development";
-  return env !== "development";
-};
+  const env = process.env.NODE_ENV ?? "development"
+  return env !== "development"
+}
 
 const morganMiddleware = morgan(
   ":remote-addr :method :url :status - :response-time ms",
@@ -18,6 +18,6 @@ const morganMiddleware = morgan(
     stream,
     skip,
   }
-);
+)
 
-export default morganMiddleware;
+export default morganMiddleware

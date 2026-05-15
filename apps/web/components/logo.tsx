@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import React, { SVGProps } from "react"
 
 // 1. Define the props interface for type safety.
 // We extend React.SVGProps<SVGSVGElement> to automatically include
@@ -8,22 +8,22 @@ export interface LogoIconProps extends SVGProps<SVGSVGElement> {
   /**
    * Optional CSS class name for the wrapper SVG.
    */
-  className?: string;
+  className?: string
 
   /**
    * Color for the primary elements. Defaults to 'currentColor' for easy inheritance.
    */
-  fill?: string;
+  fill?: string
 
   /**
    * The width and height of the icon.
    */
-  size?: number | string;
+  size?: number | string
 
   /**
    * Optional inline style object for the wrapper SVG.
    */
-  style?: React.CSSProperties;
+  style?: React.CSSProperties
 }
 
 /**
@@ -41,7 +41,7 @@ export const LogoIcon = ({
 }: LogoIconProps): React.ReactElement => {
   const finalStyle: React.CSSProperties = {
     ...style,
-  };
+  }
 
   return (
     <svg
@@ -55,15 +55,15 @@ export const LogoIcon = ({
       {...rest}
     >
       <g fill={fill} transform="translate(4 0)">
-        <path d="m39.9912 23.4176c-.3082-10.7763-9.1408-19.4176-19.9917-19.4176-3.4364 0-6.6703.86666-9.4952 2.39332z"/>
-        <path d="m7.69233 8.23393c-.82777.64708-1.60327 1.35793-2.31912 2.12517l33.75749 19.4899c.3034-.9937.5315-2.0202.6777-3.0728z"/>
-        <path d="m34.6261 37.6406c-.7158.7672-1.4913 1.4781-2.319 2.1252l-32.116401-18.5424c.146207-1.0527.374348-2.0792.677775-3.0728z"/>
-        <path d="m36.523 35.2717-34.54912-19.947c.43665-.9056.93953-1.7733 1.50236-2.5967l34.54906 19.9469c-.4366.9056-.9395 1.7733-1.5023 2.5968z"/>
-        <path d="m19.9995 44c3.4366 0 6.6707-.8667 9.4957-2.3936l-29.4873875-17.0245c.3078965 10.7766 9.1406275 19.4181 19.9916875 19.4181z"/>
+        <path d="m39.9912 23.4176c-.3082-10.7763-9.1408-19.4176-19.9917-19.4176-3.4364 0-6.6703.86666-9.4952 2.39332z" />
+        <path d="m7.69233 8.23393c-.82777.64708-1.60327 1.35793-2.31912 2.12517l33.75749 19.4899c.3034-.9937.5315-2.0202.6777-3.0728z" />
+        <path d="m34.6261 37.6406c-.7158.7672-1.4913 1.4781-2.319 2.1252l-32.116401-18.5424c.146207-1.0527.374348-2.0792.677775-3.0728z" />
+        <path d="m36.523 35.2717-34.54912-19.947c.43665-.9056.93953-1.7733 1.50236-2.5967l34.54906 19.9469c-.4366.9056-.9395 1.7733-1.5023 2.5968z" />
+        <path d="m19.9995 44c3.4366 0 6.6707-.8667 9.4957-2.3936l-29.4873875-17.0245c.3078965 10.7766 9.1406275 19.4181 19.9916875 19.4181z" />
       </g>
     </svg>
-  );
-};
+  )
+}
 
 /**
  * Props for the LogoWithText component.
@@ -72,27 +72,27 @@ export interface LogoWithTextProps {
   /**
    * Optional CSS class name for the wrapper div.
    */
-  className?: string;
+  className?: string
 
   /**
    * Size of the logo icon. Defaults to 40.
    */
-  iconSize?: number | string;
+  iconSize?: number | string
 
   /**
    * Color for the logo icon. Defaults to 'currentColor'.
    */
-  iconFill?: string;
+  iconFill?: string
 
   /**
    * Font size for the text. Defaults to '1.5rem'.
    */
-  textSize?: string;
+  textSize?: string
 
   /**
    * Optional inline style object for the wrapper div.
    */
-  style?: React.CSSProperties;
+  style?: React.CSSProperties
 }
 
 /**
@@ -118,11 +118,11 @@ export const Logo = ({
           fontWeight: 900,
           fontStyle: "italic",
           letterSpacing: "-0.04em",
-          textTransform: "uppercase"
+          textTransform: "uppercase",
         }}
       >
         Slope
       </span>
     </div>
-  );
-};
+  )
+}

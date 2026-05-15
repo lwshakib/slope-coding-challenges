@@ -1,9 +1,9 @@
-"use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@workspace/ui/components/button";
-import { useTheme } from "next-themes";
-import { Input } from "@workspace/ui/components/input";
+"use client"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { Button } from "@workspace/ui/components/button"
+import { useTheme } from "next-themes"
+import { Input } from "@workspace/ui/components/input"
 import {
   Moon,
   Sun,
@@ -11,9 +11,9 @@ import {
   MessageCircle,
   Globe,
   User,
-  Code2
-} from "lucide-react";
-import { Logo } from "./logo";
+  Code2,
+} from "lucide-react"
+import { Logo } from "./logo"
 
 const data = () => ({
   navigation: {
@@ -52,22 +52,22 @@ const data = () => ({
     { href: "/terms", label: "Terms" },
     { href: "/cookies", label: "Cookies" },
   ],
-});
+})
 
 export default function FooterSection() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear()
 
-  if (!mounted) return null;
+  if (!mounted) return null
 
   return (
-    <footer className="w-full bg-background border-t border-border/40">
+    <footer className="w-full border-t border-border/40 bg-background">
       <div className="relative w-full px-5 py-16">
         {/* Top Section */}
         <div className="container m-auto grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-5">
@@ -76,8 +76,10 @@ export default function FooterSection() {
             <Link href="/" className="inline-flex items-center gap-3">
               <Logo />
             </Link>
-            <p className="text-muted-foreground max-w-sm font-medium leading-relaxed italic">
-              The premier platform for technical interview preparation. Master algorithms, compete in global rounds, and land your dream role at top tech companies.
+            <p className="max-w-sm leading-relaxed font-medium text-muted-foreground italic">
+              The premier platform for technical interview preparation. Master
+              algorithms, compete in global rounds, and land your dream role at
+              top tech companies.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
@@ -87,7 +89,7 @@ export default function FooterSection() {
                     size="icon"
                     variant="outline"
                     asChild
-                    className="hover:bg-primary hover:text-primary-foreground border-border/40 cursor-pointer shadow-none transition-all duration-500 hover:scale-110 hover:-rotate-12"
+                    className="cursor-pointer border-border/40 shadow-none transition-all duration-500 hover:scale-110 hover:-rotate-12 hover:bg-primary hover:text-primary-foreground"
                   >
                     <Link href={href}>
                       <Icon className="h-4 w-4" />
@@ -99,7 +101,7 @@ export default function FooterSection() {
                 variant="outline"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="hover:bg-primary hover:text-primary-foreground border-border/40 cursor-pointer shadow-none transition-all duration-500 hover:scale-110 hover:rotate-12"
+                className="cursor-pointer border-border/40 shadow-none transition-all duration-500 hover:scale-110 hover:rotate-12 hover:bg-primary hover:text-primary-foreground"
               >
                 {theme === "dark" ? (
                   <Sun className="h-4 w-4" />
@@ -109,22 +111,24 @@ export default function FooterSection() {
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </div>
-            
+
             <form
               onSubmit={(e) => e.preventDefault()}
               className="w-full max-w-sm space-y-4 pt-4"
             >
-              <h4 className="text-sm font-black italic uppercase tracking-widest text-foreground">Subscribe to Slope Monthly</h4>
+              <h4 className="text-sm font-black tracking-widest text-foreground uppercase italic">
+                Subscribe to Slope Monthly
+              </h4>
               <div className="relative w-full">
                 <Input
                   type="email"
                   placeholder="Enter your email"
-                  className="h-12 w-full rounded-xl bg-muted/50 border-border/40 focus:border-primary/50 transition-all font-medium"
+                  className="h-12 w-full rounded-xl border-border/40 bg-muted/50 font-medium transition-all focus:border-primary/50"
                   required
                 />
                 <Button
                   type="submit"
-                  className="absolute top-1.5 right-1.5 h-9 rounded-lg font-bold uppercase tracking-widest text-[10px] px-4"
+                  className="absolute top-1.5 right-1.5 h-9 rounded-lg px-4 text-[10px] font-bold tracking-widest uppercase"
                 >
                   Join
                 </Button>
@@ -137,7 +141,7 @@ export default function FooterSection() {
             {(["platform", "company", "resources", "legal"] as const).map(
               (section) => (
                 <div key={section} className="w-full">
-                  <h3 className="mb-6 text-sm font-black italic tracking-widest uppercase text-foreground border-l-4 border-primary pl-4">
+                  <h3 className="mb-6 border-l-4 border-primary pl-4 text-sm font-black tracking-widest text-foreground uppercase italic">
                     {section}
                   </h3>
                   <ul className="space-y-4">
@@ -145,9 +149,9 @@ export default function FooterSection() {
                       <li key={item.name}>
                         <Link
                           href={item.href}
-                          className="group text-muted-foreground hover:text-primary font-bold text-sm flex items-center gap-2 transition-all duration-300"
+                          className="group flex items-center gap-2 text-sm font-bold text-muted-foreground transition-all duration-300 hover:text-primary"
                         >
-                          <ArrowDownLeft className="h-3 w-3 rotate-[225deg] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                          <ArrowDownLeft className="h-3 w-3 -translate-x-2 rotate-[225deg] opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                           {item.name}
                         </Link>
                       </li>
@@ -160,16 +164,22 @@ export default function FooterSection() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-border/40 flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border/40 pt-8 md:flex-row">
           <div className="flex items-center gap-6">
-              <span className="text-[10px] font-black italic tracking-tighter text-foreground uppercase text-3xl opacity-20">Slope</span>
-              <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">
-                &copy; {currentYear} Slope Academy. All rights reserved.
-              </p>
+            <span className="text-3xl text-[10px] font-black tracking-tighter text-foreground uppercase italic opacity-20">
+              Slope
+            </span>
+            <p className="text-xs font-bold tracking-widest text-muted-foreground uppercase">
+              &copy; {currentYear} Slope Academy. All rights reserved.
+            </p>
           </div>
           <div className="flex items-center gap-8">
             {data().bottomLinks.map(({ href, label }) => (
-              <Link key={href} href={href} className="text-muted-foreground hover:text-foreground text-xs font-bold uppercase tracking-widest transition-colors">
+              <Link
+                key={href}
+                href={href}
+                className="text-xs font-bold tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground"
+              >
                 {label}
               </Link>
             ))}
@@ -178,5 +188,5 @@ export default function FooterSection() {
         <span className="absolute inset-x-0 bottom-0 left-0 -z-10 h-32 w-full bg-gradient-to-t from-primary/5 to-transparent opacity-50" />
       </div>
     </footer>
-  );
+  )
 }

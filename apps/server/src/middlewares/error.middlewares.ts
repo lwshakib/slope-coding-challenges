@@ -1,6 +1,11 @@
-import type { Request, Response, NextFunction, ErrorRequestHandler } from "express";
-import logger from "../logger/winston.logger.js";
-import { ApiError } from "../utils/ApiError.js";
+import type {
+  Request,
+  Response,
+  NextFunction,
+  ErrorRequestHandler,
+} from "express"
+import logger from "../logger/winston.logger.js"
+import { ApiError } from "../utils/ApiError.js"
 
 const errorHandler: ErrorRequestHandler = (
   err: unknown,
@@ -8,40 +13,38 @@ const errorHandler: ErrorRequestHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  let error: ApiError;
+  let error: ApiError
 
   if (err instanceof ApiError) {
-    error = err;
+    error = err
   } else {
     const maybeErr = err as Partial<{
-      statusCode: number;
-      message: string;
-      errors: unknown[];
-      stack: string;
-    }>;
+      statusCode: number
+      message: string
+      errors: unknown[]
+      stack: string
+    }>
 
-    const statusCode = maybeErr?.statusCode ? 400 : 500;
-    const message = maybeErr?.message ?? "Something went wrong";
+    const statusCode = maybeErr?.statusCode ? 400 : 500
+    const message = maybeErr?.message ?? "Something went wrong"
 
     error = new ApiError(
       statusCode,
       message,
       maybeErr?.errors ?? [],
       maybeErr?.stack
-    );
+    )
   }
 
   const response: Record<string, unknown> = {
     ...error,
     message: error.message,
-    ...(process.env.NODE_ENV === "development"
-      ? { stack: error.stack }
-      : {}),
-  };
+    ...(process.env.NODE_ENV === "development" ? { stack: error.stack } : {}),
+  }
 
-  logger.error(`${error.message}`);
+  logger.error(`${error.message}`)
 
-  return res.status(error.statusCode).json(response);
-};
+  return res.status(error.statusCode).json(response)
+}
 
-export { errorHandler };
+export { errorHandler }
